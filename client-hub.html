@@ -15,6 +15,8 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<!-- Smooth page transition -->
+<div class="page-fade" id="pageFade"></div>
 
 <!-- Global layers -->
 <div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -123,6 +125,23 @@
     for(var i=0;i<N;i++)ps.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+.8,dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.15-.04,o:Math.random()*.35+.1,h:Math.random()<.3?'245,215,80':'212,175,55'});
     (function d(){ctx.clearRect(0,0,canvas.width,canvas.height);for(var i=0;i<ps.length;i++){var p=ps[i];p.x+=p.dx;p.y+=p.dy;if(p.x<-10)p.x=canvas.width+10;if(p.x>canvas.width+10)p.x=-10;if(p.y<-10)p.y=canvas.height+10;if(p.y>canvas.height+10)p.y=-10;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fillStyle='rgba('+p.h+','+p.o+')';ctx.fill()}requestAnimationFrame(d)})();
   }
+})();
+// Dismiss page fade and reveal content
+(function(){
+  var fade=document.getElementById('pageFade');
+  var card=document.getElementById('hubCard');
+  var topbar=document.querySelector('.hub-topbar');
+  function reveal(){
+    setTimeout(function(){
+      if(fade) fade.classList.add('done');
+      if(topbar) topbar.classList.add('visible');
+      setTimeout(function(){
+        if(card) card.classList.add('visible');
+      },150);
+    },60);
+  }
+  if(document.readyState==='complete') reveal();
+  else window.addEventListener('load',reveal);
 })();
 </script>
 </body>

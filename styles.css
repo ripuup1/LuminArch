@@ -464,7 +464,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* ===== CLIENT HUB PORTAL ===== */
 
 /* Login page — top bar */
-.hub-topbar{position:fixed;top:0;left:0;width:100%;height:var(--nav-height);z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad)}
+.hub-topbar{position:fixed;top:0;left:0;width:100%;height:var(--nav-height);z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);opacity:0;transition:opacity .5s ease .1s}
+.hub-topbar.visible{opacity:1}
 .hub-topbar__logo{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .hub-topbar__logo img{height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))}
 .hub-topbar__back{font-size:.8125rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-light);transition:color .3s ease}
@@ -474,7 +475,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 
 /* Login page — centered card layout */
 .hub-page{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:var(--nav-height) var(--pad) 40px;position:relative;z-index:2}
-.hub-card{width:100%;max-width:440px;background:var(--gray-dark);border:1px solid var(--gray-mid);border-radius:2px;padding:clamp(32px,4vw,48px);position:relative;transition:border-color .3s ease}
+.hub-card{width:100%;max-width:440px;background:var(--gray-dark);border:1px solid var(--gray-mid);border-radius:2px;padding:clamp(32px,4vw,48px);position:relative;transition:border-color .3s ease,opacity .6s ease,transform .6s var(--ease-out-expo);opacity:0;transform:translateY(16px)}
+.hub-card.visible{opacity:1;transform:translateY(0)}
 .hub-card:hover{border-color:rgba(212,175,55,0.2)}
 
 /* Hub form extends contact form styles */
@@ -504,6 +506,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .hub-toast--info{border-color:var(--gray-light)}
 
 /* ===== DASHBOARD ===== */
+
+/* Auth-gated content — hidden until auth confirmed */
+.dash-loading{opacity:0;transition:opacity .5s ease}
+.dash-loading.dash-ready{opacity:1}
 
 /* Header row */
 .dash-header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}

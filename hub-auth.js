@@ -204,11 +204,17 @@
   });
 
   function initDashboard() {
-    // Show content
+    // Show dashboard content + footer (hidden during auth check)
     var content = $('dashContent');
     var footer = $('dashFooter');
-    if (content) content.style.opacity = '1';
-    if (footer) footer.style.opacity = '1';
+    if (content) content.classList.add('dash-ready');
+    if (footer) footer.classList.add('dash-ready');
+
+    // Dismiss page-fade if scripts.js hasn't already
+    var pageFade = document.querySelector('.page-fade');
+    if (pageFade && !pageFade.classList.contains('done')) {
+      pageFade.classList.add('done');
+    }
 
     // Set user name
     var nameEl = $('userName');
