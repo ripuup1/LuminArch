@@ -370,19 +370,26 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .rocket-arc__path.fading{opacity:0;transition:opacity 2s ease}
 
 /* Rocket ship — positioned by JS along the arc */
-.rocket-arc__ship{position:absolute;width:64px;height:64px;opacity:0;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 18px var(--accent-glow)) drop-shadow(0 0 40px rgba(212,175,55,0.2));transition:opacity .3s ease}
+.rocket-arc__ship{position:absolute;width:72px;height:72px;opacity:0;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 16px rgba(232,101,26,0.5)) drop-shadow(0 0 40px rgba(245,166,35,0.25));transition:opacity .3s ease}
 .rocket-arc__ship.flying{opacity:1}
 .rocket-arc__ship.crashed{opacity:0;transition:opacity .2s ease}
 .rocket-arc__ship svg{width:100%;height:100%}
-.ra-stroke{stroke:var(--accent);stroke-width:1.8;fill:none}
-.ra-fill{fill:var(--accent-dim)}
+
+/* Flame flicker animation */
+.ra-flame{transform-origin:60px 145px;animation:rocketFlame .12s ease-in-out infinite alternate}
+.ra-flame--inner{animation-delay:.04s}
+.ra-flame--core{animation-delay:.08s}
+@keyframes rocketFlame{
+  0%{transform:scaleY(1) scaleX(1)}
+  100%{transform:scaleY(1.12) scaleX(.9)}
+}
 
 /* Smoke puffs — spawned by JS at rocket position */
-.rocket-arc__puff{position:absolute;border-radius:50%;background:rgba(212,175,55,0.3);pointer-events:none;opacity:0;animation:arcPuff 1.2s ease-out forwards}
+.rocket-arc__puff{position:absolute;border-radius:50%;background:rgba(245,166,35,0.25);pointer-events:none;opacity:0;animation:arcPuff 1.4s ease-out forwards}
 @keyframes arcPuff{
-  0%{opacity:.5;transform:scale(.4);filter:blur(2px)}
-  40%{opacity:.25;transform:scale(1.2);filter:blur(5px)}
-  100%{opacity:0;transform:scale(2);filter:blur(10px)}
+  0%{opacity:.55;transform:scale(.3);filter:blur(1px)}
+  30%{opacity:.3;transform:scale(1);filter:blur(4px);background:rgba(180,120,40,0.2)}
+  100%{opacity:0;transform:scale(2.5);filter:blur(12px);background:rgba(100,80,60,0.1)}
 }
 
 /* Impact flash at crash point — large, bright burst */

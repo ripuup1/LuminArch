@@ -242,9 +242,9 @@
           var pos = quadBezier(eased, pts.p0, pts.p1, pts.p2);
           var angle = quadBezierAngle(eased, pts.p0, pts.p1, pts.p2);
 
-          // Move ship — rotate SVG 90deg (nose up) + arc tangent angle
-          ship.style.left = (pos.x - 32) + 'px';
-          ship.style.top = (pos.y - 32) + 'px';
+          // Move ship — center the 72px rocket on the path point
+          ship.style.left = (pos.x - 36) + 'px';
+          ship.style.top = (pos.y - 36) + 'px';
           ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
 
           // Draw trail behind rocket
