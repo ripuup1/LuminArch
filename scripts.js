@@ -29,6 +29,8 @@
         var remaining = Math.max(0, LOADER_MIN - elapsed);
         setTimeout(function () {
           loader.classList.add('done');
+          // ALSO dismiss the page-fade sitting behind the loader
+          if (pageFade) pageFade.classList.add('done');
           setTimeout(triggerHeroAnimation, 700);
         }, remaining);
       });
@@ -179,7 +181,7 @@
     }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.process-connector').forEach(function (el) { specialObs.observe(el); });
 
-    /* ---------- ROCKET ARC FLIGHT + FIREWORKS EXPLOSION ---------- */
+    /* ---------- ROCKET ARC FLIGHT + FIREWORKS (Canvas-based) ---------- */
     (function initRocketArc() {
       var isMobile = window.matchMedia('(max-width:768px)').matches;
       var arc = document.getElementById(isMobile ? 'rocketArcMobile' : 'rocketArc');
@@ -187,10 +189,8 @@
 
       var pathEl = arc.querySelector('.rocket-arc__path');
       var ship = arc.querySelector('.rocket-arc__ship');
-      var impact = arc.querySelector('.rocket-arc__impact');
       var container = arc;
 
-      // Quadratic bezier: B(t) = (1-t)^2*P0 + 2(1-t)t*P1 + t^2*P2
       function quadBezier(t, p0, p1, p2) {
         var mt = 1 - t;
         return {
@@ -201,67 +201,20 @@
 
       function quadBezierAngle(t, p0, p1, p2) {
         var mt = 1 - t;
-        var dx = 2 * mt * (p1.x - p0.x) + 2 * t * (p2.x - p1.x);
-        var dy = 2 * mt * (p1.y - p0.y) + 2 * t * (p2.y - p1.y);
-        return Math.atan2(dy, dx);
+        return Math.atan2(
+          2 * mt * (p1.y - p0.y) + 2 * t * (p2.y - p1.y),
+          2 * mt * (p1.x - p0.x) + 2 * t * (p2.x - p1.x)
+        );
       }
 
-      /* --- Orbiting particles (swirl around rocket like Dan Palmer gif) --- */
-      var orbitDots = [];
-      function spawnOrbit() {
-        var dot = document.createElement('span');
-        dot.className = 'orbit-dot';
-        var size = 3 + Math.random() * 5;
-        dot.style.width = size + 'px';
-        dot.style.height = size + 'px';
-        var hues = ['rgba(245,208,96,0.9)', 'rgba(245,166,35,0.8)', 'rgba(212,175,55,0.85)', 'rgba(255,244,210,0.7)'];
-        dot.style.background = hues[Math.floor(Math.random() * hues.length)];
-        container.appendChild(dot);
-        orbitDots.push({
-          el: dot,
-          angle: Math.random() * Math.PI * 2,
-          radius: 22 + Math.random() * 40,
-          speed: (3 + Math.random() * 4) * (Math.random() > 0.5 ? 1 : -1),
-          born: Date.now(),
-          life: 500 + Math.random() * 500
-        });
-      }
-
-      function updateOrbits(cx, cy) {
-        var now = Date.now();
-        orbitDots.forEach(function (d) {
-          d.angle += d.speed * 0.04;
-          d.el.style.left = (cx + Math.cos(d.angle) * d.radius) + 'px';
-          d.el.style.top = (cy + Math.sin(d.angle) * d.radius) + 'px';
-          var age = now - d.born;
-          var life = age / d.life;
-          d.el.style.opacity = life < 0.15 ? life / 0.15 : Math.max(0, 1 - (life - 0.15) / 0.85);
-        });
-        orbitDots = orbitDots.filter(function (d) {
-          if (Date.now() - d.born > d.life) {
-            if (d.el.parentNode) d.el.parentNode.removeChild(d.el);
-            return false;
-          }
-          return true;
-        });
-      }
-
-      function clearOrbits() {
-        orbitDots.forEach(function (d) { if (d.el.parentNode) d.el.parentNode.removeChild(d.el); });
-        orbitDots = [];
-      }
-
-      /* --- Build path --- */
       function buildArcPath() {
-        var rect = container.getBoundingClientRect();
-        var w = container.offsetWidth || rect.width;
-        var h = container.offsetHeight || rect.height;
-        if (w === 0 || h === 0) return null;
+        var w = container.offsetWidth;
+        var h = container.offsetHeight;
+        if (!w || !h) return null;
 
-        // HIGH arc: launches bottom-left, peaks far above grid, ends above the text
         var p0 = { x: w * 0.05, y: h * 0.9 };
-        var p1 = { x: w * 0.35, y: h * -0.9 };    // control: way above
-        var p2 = { x: w * 0.62, y: h * -0.05 };   // explosion: just above text
+        var p1 = { x: w * 0.35, y: h * -0.9 };
+        var p2 = { x: w * 0.62, y: h * -0.05 };
 
         var svg = arc.querySelector('.rocket-arc__svg');
         svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
@@ -276,164 +229,214 @@
         return { p0: p0, p1: p1, p2: p2, len: len, w: w, h: h };
       }
 
-      function spawnPuff(x, y, size) {
-        var puff = document.createElement('span');
-        puff.className = 'rocket-arc__puff';
-        var s = size || (6 + Math.random() * 12);
-        puff.style.width = s + 'px';
-        puff.style.height = s + 'px';
-        puff.style.left = (x - s / 2) + 'px';
-        puff.style.top = (y - s / 2) + 'px';
-        container.appendChild(puff);
-        setTimeout(function () { if (puff.parentNode) puff.parentNode.removeChild(puff); }, 1400);
-      }
-
-      /* --- Fireworks explosion + gold rain --- */
-      function spawnExplosion(x, y) {
-        // 1) Shockwave rings
-        var ring = document.createElement('span');
-        ring.className = 'burst-ring';
-        ring.style.left = x + 'px';
-        ring.style.top = y + 'px';
-        container.appendChild(ring);
-        setTimeout(function () { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 1200);
-
-        setTimeout(function () {
-          var ring2 = document.createElement('span');
-          ring2.className = 'burst-ring burst-ring--delayed';
-          ring2.style.left = x + 'px';
-          ring2.style.top = y + 'px';
-          container.appendChild(ring2);
-          setTimeout(function () { if (ring2.parentNode) ring2.parentNode.removeChild(ring2); }, 1200);
-        }, 120);
-
-        // 2) Central flash
-        impact.style.left = x + 'px';
-        impact.style.top = y + 'px';
-        impact.classList.add('flash');
-
-        // 3) Radial burst particles
-        var burstCount = 40;
-        for (var i = 0; i < burstCount; i++) {
-          var angle = (Math.PI * 2 / burstCount) * i + (Math.random() - 0.5) * 0.4;
-          var dist = 60 + Math.random() * 150;
-          var bp = document.createElement('span');
-          bp.className = 'burst-particle';
-          bp.style.left = x + 'px';
-          bp.style.top = y + 'px';
-          bp.style.setProperty('--bx', (Math.cos(angle) * dist) + 'px');
-          bp.style.setProperty('--by', (Math.sin(angle) * dist) + 'px');
-          var bsize = 2 + Math.random() * 4;
-          bp.style.width = bsize + 'px';
-          bp.style.height = bsize + 'px';
-          container.appendChild(bp);
-          (function (el) { setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); })(bp);
-        }
-
-        // 4) Gold rain — fireworks cascade (erupts up then falls down)
-        var rainCount = 65;
-        for (var j = 0; j < rainCount; j++) {
-          (function (idx) {
-            var delay = Math.random() * 500;
-            setTimeout(function () {
-              var rain = document.createElement('span');
-              rain.className = 'gold-rain';
-              rain.style.left = x + 'px';
-              rain.style.top = y + 'px';
-              // Burst upward/outward first, then gravity pulls down
-              var burstAngle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.9;
-              var burstDist = 30 + Math.random() * 90;
-              var dxUp = Math.cos(burstAngle) * burstDist;
-              var dyUp = Math.sin(burstAngle) * burstDist;
-              var dxDrift = (Math.random() - 0.5) * 200;
-              var dyFall = 180 + Math.random() * 380;
-              rain.style.setProperty('--dx-up', dxUp + 'px');
-              rain.style.setProperty('--dy-up', dyUp + 'px');
-              rain.style.setProperty('--dx-drift', (dxUp * 0.5 + dxDrift) + 'px');
-              rain.style.setProperty('--dy-fall', dyFall + 'px');
-              var dur = 1.6 + Math.random() * 1.6;
-              rain.style.animationDuration = dur + 's';
-              var rsize = 2 + Math.random() * 5;
-              rain.style.width = rsize + 'px';
-              rain.style.height = rsize + 'px';
-              container.appendChild(rain);
-              setTimeout(function () { if (rain.parentNode) rain.parentNode.removeChild(rain); }, (dur + 0.6) * 1000);
-            }, delay);
-          })(j);
-        }
-
-        // 5) Illuminate keywords as gold rain cascades
-        setTimeout(function () {
-          var words = document.querySelectorAll('.glow-word');
-          words.forEach(function (w, i) {
-            setTimeout(function () { w.classList.add('lit'); }, i * 90);
-          });
-          // Also illuminate story text and label
-          var texts = document.querySelectorAll('.story-text');
-          texts.forEach(function (txt, i) {
-            setTimeout(function () { txt.classList.add('illuminated'); }, 200 + i * 150);
-          });
-          var label = document.querySelector('.story-grid__left .label');
-          if (label) label.classList.add('illuminated');
-        }, 500);
-      }
-
-      /* --- Main flight animation --- */
       function runAnimation(pts) {
+        // Single canvas for ALL particle effects — zero DOM thrashing
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var padTop = 350;
+        var padBot = 300;
+        var cw = container.offsetWidth;
+        var ch = container.offsetHeight + padTop + padBot;
+
+        var cvs = document.createElement('canvas');
+        cvs.width = Math.round(cw * dpr);
+        cvs.height = Math.round(ch * dpr);
+        cvs.style.cssText = 'position:absolute;left:0;top:-' + padTop + 'px;width:' + cw + 'px;height:' + ch + 'px;pointer-events:none;z-index:10;';
+        container.appendChild(cvs);
+        var ctx = cvs.getContext('2d');
+        ctx.scale(dpr, dpr);
+
         var DURATION = 2200;
         var startTime = null;
-        var lastPuff = 0;
+        var exploded = false;
+        var expPt = null;
         var lastOrbit = 0;
-        var PUFF_INTERVAL = 70;
-        var ORBIT_INTERVAL = 140;
+        var lastPuff = 0;
+
+        // Lightweight particle pools (plain arrays, no DOM)
+        var orbits = [];
+        var puffs = [];
+        var bursts = [];
+        var rains = [];
+        var rings = [];
+        var flashLife = 0;
+        var GOLD = ['#F5D060', '#F5A623', '#D4AF37', '#FFF4D2'];
 
         ship.classList.add('flying');
         pathEl.classList.add('drawing');
 
-        function step(timestamp) {
-          if (!startTime) startTime = timestamp;
-          var elapsed = timestamp - startTime;
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          var elapsed = ts - startTime;
           var t = Math.min(elapsed / DURATION, 1);
           var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
           var pos = quadBezier(eased, pts.p0, pts.p1, pts.p2);
           var angle = quadBezierAngle(eased, pts.p0, pts.p1, pts.p2);
 
-          ship.style.left = (pos.x - 36) + 'px';
-          ship.style.top = (pos.y - 36) + 'px';
-          ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
+          // Move ship + trail (only 2 DOM writes per frame)
+          if (!exploded) {
+            ship.style.left = (pos.x - 36) + 'px';
+            ship.style.top = (pos.y - 36) + 'px';
+            ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
+            pathEl.style.strokeDashoffset = pts.len * (1 - eased);
+          }
 
-          pathEl.style.strokeDashoffset = pts.len * (1 - eased);
+          // Canvas coords (offset by padTop)
+          var cx = pos.x;
+          var cy = pos.y + padTop;
 
-          // Smoke puffs
-          if (elapsed - lastPuff > PUFF_INTERVAL && t < 0.92) {
-            spawnPuff(pos.x, pos.y, 5 + Math.random() * 10);
+          // Spawn orbits during flight
+          if (!exploded && elapsed - lastOrbit > 160) {
+            orbits.push({
+              a: Math.random() * 6.283, r: 20 + Math.random() * 35,
+              s: (2.5 + Math.random() * 3.5) * (Math.random() > 0.5 ? 1 : -1),
+              sz: 2 + Math.random() * 3, life: 1, d: 0.022,
+              c: GOLD[Math.floor(Math.random() * 4)]
+            });
+            lastOrbit = elapsed;
+          }
+
+          // Spawn puffs during flight
+          if (!exploded && elapsed - lastPuff > 120 && t < 0.93) {
+            puffs.push({ x: cx, y: cy, sz: 3 + Math.random() * 6, life: 1, d: 0.03 });
             lastPuff = elapsed;
           }
 
-          // Orbit particles
-          if (elapsed - lastOrbit > ORBIT_INTERVAL && t < 0.88) {
-            spawnOrbit();
-            lastOrbit = elapsed;
-          }
-          updateOrbits(pos.x, pos.y);
+          // --- DRAW ---
+          ctx.clearRect(0, 0, cw, ch);
+          var i, p;
 
-          if (t < 1) {
-            requestAnimationFrame(step);
-          } else {
-            // --- EXPLOSION ---
+          // Puffs (soft circles, no blur)
+          for (i = puffs.length - 1; i >= 0; i--) {
+            p = puffs[i]; p.life -= p.d; p.sz += 0.3;
+            if (p.life <= 0) { puffs.splice(i, 1); continue; }
+            ctx.globalAlpha = p.life * 0.18;
+            ctx.fillStyle = '#D4AF37';
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 6.283); ctx.fill();
+          }
+
+          // Orbits (circle around rocket / explosion center)
+          var ocx = exploded ? expPt.x : cx;
+          var ocy = exploded ? expPt.y : cy;
+          for (i = orbits.length - 1; i >= 0; i--) {
+            p = orbits[i]; p.a += p.s * 0.04; p.life -= p.d;
+            if (p.life <= 0) { orbits.splice(i, 1); continue; }
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.c;
+            ctx.beginPath();
+            ctx.arc(ocx + Math.cos(p.a) * p.r, ocy + Math.sin(p.a) * p.r, p.sz, 0, 6.283);
+            ctx.fill();
+          }
+
+          // Flash
+          if (flashLife > 0) {
+            var fr = (1 - flashLife) * 280 + 10;
+            var g = ctx.createRadialGradient(expPt.x, expPt.y, 0, expPt.x, expPt.y, fr);
+            g.addColorStop(0, 'rgba(255,244,210,' + (flashLife * 0.85).toFixed(2) + ')');
+            g.addColorStop(0.3, 'rgba(245,208,96,' + (flashLife * 0.5).toFixed(2) + ')');
+            g.addColorStop(0.7, 'rgba(212,175,55,' + (flashLife * 0.12).toFixed(2) + ')');
+            g.addColorStop(1, 'rgba(212,175,55,0)');
+            ctx.globalAlpha = 1; ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, fr, 0, 6.283); ctx.fill();
+            flashLife -= 0.016;
+          }
+
+          // Rings
+          for (i = rings.length - 1; i >= 0; i--) {
+            p = rings[i];
+            if (p.wait > 0) { p.wait--; continue; }
+            p.r += (p.max - p.r) * 0.06; p.life -= p.d;
+            if (p.life <= 0) { rings.splice(i, 1); continue; }
+            ctx.globalAlpha = p.life * 0.45;
+            ctx.strokeStyle = '#F5D060'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, p.r, 0, 6.283); ctx.stroke();
+          }
+
+          // Burst particles
+          for (i = bursts.length - 1; i >= 0; i--) {
+            p = bursts[i]; p.x += p.vx; p.y += p.vy;
+            p.vx *= 0.96; p.vy *= 0.96; p.life -= p.d;
+            if (p.life <= 0) { bursts.splice(i, 1); continue; }
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#F5D060';
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * (0.4 + p.life * 0.6), 0, 6.283); ctx.fill();
+          }
+
+          // Gold rain
+          for (i = rains.length - 1; i >= 0; i--) {
+            p = rains[i];
+            if (p.wait > 0) { p.wait--; continue; }
+            p.vy += p.g; p.x += p.vx; p.y += p.vy;
+            p.vx *= 0.998; p.life -= p.d;
+            if (p.life <= 0) { rains.splice(i, 1); continue; }
+            ctx.globalAlpha = Math.min(1, p.life * 1.5);
+            ctx.fillStyle = p.life > 0.5 ? '#FFF4D2' : (p.life > 0.25 ? '#F5D060' : '#D4AF37');
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * Math.max(0.25, p.life), 0, 6.283); ctx.fill();
+          }
+
+          ctx.globalAlpha = 1;
+
+          // --- TRIGGER EXPLOSION ---
+          if (t >= 1 && !exploded) {
+            exploded = true;
+            expPt = { x: cx, y: cy };
+
             ship.classList.remove('flying');
             ship.classList.add('crashed');
-            clearOrbits();
-
-            // Fade trail
             setTimeout(function () {
               pathEl.classList.remove('drawing');
               pathEl.classList.add('fading');
             }, 100);
 
-            // Fire the explosion + gold rain
-            spawnExplosion(pos.x, pos.y);
+            flashLife = 1;
+            rings.push({ r: 0, max: 240, life: 1, d: 0.018, wait: 0 });
+            rings.push({ r: 0, max: 190, life: 1, d: 0.016, wait: 8 });
+
+            for (var bi = 0; bi < 28; bi++) {
+              var ba = (6.283 / 28) * bi + (Math.random() - 0.5) * 0.4;
+              bursts.push({
+                x: cx, y: cy,
+                vx: Math.cos(ba) * (1.5 + Math.random() * 3),
+                vy: Math.sin(ba) * (1.5 + Math.random() * 3),
+                sz: 1.5 + Math.random() * 2.5, life: 1, d: 0.022
+              });
+            }
+
+            for (var ri = 0; ri < 40; ri++) {
+              var ra = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.85;
+              var rd = 0.5 + Math.random() * 2;
+              rains.push({
+                x: cx, y: cy,
+                vx: Math.cos(ra) * rd + (Math.random() - 0.5) * 0.7,
+                vy: Math.sin(ra) * rd,
+                g: 0.025 + Math.random() * 0.02,
+                sz: 1.5 + Math.random() * 3, life: 1,
+                d: 0.005 + Math.random() * 0.004,
+                wait: Math.floor(Math.random() * 12)
+              });
+            }
+
+            // Illuminate keywords
+            setTimeout(function () {
+              var words = document.querySelectorAll('.glow-word');
+              words.forEach(function (w, idx) {
+                setTimeout(function () { w.classList.add('lit'); }, idx * 90);
+              });
+              var texts = document.querySelectorAll('.story-text');
+              texts.forEach(function (txt, idx) {
+                setTimeout(function () { txt.classList.add('illuminated'); }, 200 + idx * 150);
+              });
+              var label = document.querySelector('.story-grid__left .label');
+              if (label) label.classList.add('illuminated');
+            }, 500);
+          }
+
+          // Continue or clean up
+          var alive = !exploded || orbits.length || puffs.length || bursts.length || rains.length || rings.length || flashLife > 0;
+          if (alive) {
+            requestAnimationFrame(step);
+          } else {
+            if (cvs.parentNode) cvs.parentNode.removeChild(cvs);
           }
         }
 
