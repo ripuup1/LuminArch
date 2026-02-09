@@ -151,7 +151,7 @@
         }
       });
     }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.rocket-visual__svg,.process-connector').forEach(function (el) { specialObs.observe(el); });
+    document.querySelectorAll('.rocket-inline__svg,.process-connector').forEach(function (el) { specialObs.observe(el); });
 
     /* ---------- LAZY IMAGE FADE-IN ---------- */
     document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {

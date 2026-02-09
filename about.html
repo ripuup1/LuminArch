@@ -71,7 +71,30 @@
 <section class="section" style="padding-top:0">
   <div class="container">
     <div class="story-grid">
-      <div class="story-grid__left reveal"><span class="label accent-text">Our Story</span></div>
+      <div class="story-grid__left reveal">
+        <span class="label accent-text">Our Story</span>
+        <!-- Rocket in empty left column space -->
+        <div class="rocket-inline">
+          <svg class="rocket-inline__svg" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Rocket body -->
+            <path class="rocket-stroke" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C44 30, 60 10, 60 10Z"/>
+            <path class="rocket-fill" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C44 30, 60 10, 60 10Z"/>
+            <!-- Window -->
+            <circle class="rocket-stroke" cx="60" cy="55" r="7" style="stroke-dasharray:44;stroke-dashoffset:44"/>
+            <circle class="rocket-fill" cx="60" cy="55" r="5"/>
+            <!-- Fins -->
+            <path class="rocket-stroke" d="M44 85 L32 108 L44 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
+            <path class="rocket-stroke" d="M76 85 L88 108 L76 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
+            <path class="rocket-fill" d="M44 85 L32 108 L44 105Z"/>
+            <path class="rocket-fill" d="M76 85 L88 108 L76 105Z"/>
+            <!-- Exhaust flames -->
+            <line class="exhaust" x1="54" y1="114" x2="48" y2="150"/>
+            <line class="exhaust" x1="60" y1="114" x2="60" y2="158"/>
+            <line class="exhaust" x1="66" y1="114" x2="72" y2="150"/>
+          </svg>
+          <p class="rocket-inline__caption">Launching businesses<br>to new heights</p>
+        </div>
+      </div>
       <div class="story-grid__right">
         <p class="body-lg reveal" style="color:var(--gray-muted)">We bridge the gap between small businesses and large businesses. We help small businesses access affordable, high-quality websites so they can proudly show their vision to any customer.</p>
         <p class="body-lg reveal" style="color:var(--gray-muted);margin-top:24px">This creates a more competitive market that ultimately helps everyone. We bring an otherwise expensive service down to accessible levels.</p>
@@ -80,32 +103,6 @@
     </div>
   </div>
 </section>
-
-<!-- Rocket Launch Visual -->
-<div class="rocket-visual reveal" style="position:relative;z-index:2">
-  <svg class="rocket-visual__svg" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- Rocket body -->
-    <path class="rocket-stroke" d="M40 10 C40 10, 56 30, 56 70 L56 100 C56 106, 52 110, 48 112 L32 112 C28 110, 24 106, 24 100 L24 70 C24 30, 40 10, 40 10Z"/>
-    <path class="rocket-fill" d="M40 10 C40 10, 56 30, 56 70 L56 100 C56 106, 52 110, 48 112 L32 112 C28 110, 24 106, 24 100 L24 70 C24 30, 40 10, 40 10Z"/>
-    <!-- Nose cone accent -->
-    <path class="rocket-stroke" d="M40 10 C40 10, 48 25, 48 40" style="stroke-dasharray:60;stroke-dashoffset:60"/>
-    <!-- Window -->
-    <circle class="rocket-stroke" cx="40" cy="55" r="7" style="stroke-dasharray:44;stroke-dashoffset:44"/>
-    <circle class="rocket-fill" cx="40" cy="55" r="5"/>
-    <!-- Fins -->
-    <path class="rocket-stroke" d="M24 85 L12 108 L24 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
-    <path class="rocket-stroke" d="M56 85 L68 108 L56 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
-    <path class="rocket-fill" d="M24 85 L12 108 L24 105Z"/>
-    <path class="rocket-fill" d="M56 85 L68 108 L56 105Z"/>
-    <!-- Exhaust lines -->
-    <line class="exhaust" x1="34" y1="114" x2="30" y2="145"/>
-    <line class="exhaust" x1="40" y1="114" x2="40" y2="152"/>
-    <line class="exhaust" x1="46" y1="114" x2="50" y2="145"/>
-  </svg>
-  <div class="rocket-visual__trail"></div>
-  <p class="rocket-visual__caption">Launching small businesses to new heights</p>
-  <div class="rocket-visual__glow"></div>
-</div>
 
 <section class="section">
   <div class="container">
