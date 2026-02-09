@@ -142,6 +142,17 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
     document.querySelectorAll('.reveal,.reveal-line').forEach(function (el) { obs.observe(el); });
 
+    /* ---------- SVG / SPECIAL ELEMENT ANIMATIONS ---------- */
+    var specialObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          specialObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.rocket-visual__svg,.process-connector').forEach(function (el) { specialObs.observe(el); });
+
     /* ---------- LAZY IMAGE FADE-IN ---------- */
     document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
       if (img.complete) {

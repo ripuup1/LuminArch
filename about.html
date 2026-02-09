@@ -81,6 +81,32 @@
   </div>
 </section>
 
+<!-- Rocket Launch Visual -->
+<div class="rocket-visual reveal" style="position:relative;z-index:2">
+  <svg class="rocket-visual__svg" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- Rocket body -->
+    <path class="rocket-stroke" d="M40 10 C40 10, 56 30, 56 70 L56 100 C56 106, 52 110, 48 112 L32 112 C28 110, 24 106, 24 100 L24 70 C24 30, 40 10, 40 10Z"/>
+    <path class="rocket-fill" d="M40 10 C40 10, 56 30, 56 70 L56 100 C56 106, 52 110, 48 112 L32 112 C28 110, 24 106, 24 100 L24 70 C24 30, 40 10, 40 10Z"/>
+    <!-- Nose cone accent -->
+    <path class="rocket-stroke" d="M40 10 C40 10, 48 25, 48 40" style="stroke-dasharray:60;stroke-dashoffset:60"/>
+    <!-- Window -->
+    <circle class="rocket-stroke" cx="40" cy="55" r="7" style="stroke-dasharray:44;stroke-dashoffset:44"/>
+    <circle class="rocket-fill" cx="40" cy="55" r="5"/>
+    <!-- Fins -->
+    <path class="rocket-stroke" d="M24 85 L12 108 L24 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
+    <path class="rocket-stroke" d="M56 85 L68 108 L56 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
+    <path class="rocket-fill" d="M24 85 L12 108 L24 105Z"/>
+    <path class="rocket-fill" d="M56 85 L68 108 L56 105Z"/>
+    <!-- Exhaust lines -->
+    <line class="exhaust" x1="34" y1="114" x2="30" y2="145"/>
+    <line class="exhaust" x1="40" y1="114" x2="40" y2="152"/>
+    <line class="exhaust" x1="46" y1="114" x2="50" y2="145"/>
+  </svg>
+  <div class="rocket-visual__trail"></div>
+  <p class="rocket-visual__caption">Launching small businesses to new heights</p>
+  <div class="rocket-visual__glow"></div>
+</div>
+
 <section class="section">
   <div class="container">
     <div class="section-header reveal">
