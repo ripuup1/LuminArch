@@ -181,33 +181,73 @@
       var wrap = document.getElementById('hscrollWrap');
       var track = document.getElementById('hscrollTrack');
       if (!wrap || !track) return;
-      if (window.matchMedia('(max-width:768px)').matches) return; // mobile: stacked
+      if (window.matchMedia('(max-width:768px)').matches) return;
 
       var slides = track.children.length;
+      // Each slide gets 100vh of scroll space
       wrap.style.height = (slides * 100) + 'vh';
 
       var barFill = document.getElementById('hscrollBarFill');
       var counterEl = document.getElementById('hscrollCurrent');
+      var prevBtn = document.getElementById('hscrollPrev');
+      var nextBtn = document.getElementById('hscrollNext');
+      var currentSlide = 0;
 
+      function updateUI(progress) {
+        var maxTx = track.scrollWidth - window.innerWidth;
+        track.style.transform = 'translateX(' + (-progress * maxTx) + 'px)';
+        if (barFill) barFill.style.width = (progress * 100) + '%';
+
+        var idx = Math.min(slides, Math.floor(progress * slides + 0.5) + 1);
+        if (idx < 1) idx = 1;
+        currentSlide = idx - 1;
+        if (counterEl) counterEl.textContent = idx < 10 ? '0' + idx : '' + idx;
+
+        // Arrow disabled states
+        if (prevBtn) prevBtn.disabled = (currentSlide <= 0);
+        if (nextBtn) nextBtn.disabled = (currentSlide >= slides - 1);
+      }
+
+      // Direct scroll listener (no RAF wrapper — transform is cheap)
       function onScroll() {
         var rect = wrap.getBoundingClientRect();
         var scrollInWrap = -rect.top;
         var maxScroll = wrap.offsetHeight - window.innerHeight;
         if (maxScroll <= 0) return;
         var progress = Math.max(0, Math.min(1, scrollInWrap / maxScroll));
-        var maxTx = track.scrollWidth - window.innerWidth;
-        track.style.transform = 'translateX(' + (-progress * maxTx) + 'px)';
-        if (barFill) barFill.style.width = (progress * 100) + '%';
-        if (counterEl) {
-          var idx = Math.min(slides, Math.floor(progress * slides) + 1);
-          counterEl.textContent = idx < 10 ? '0' + idx : idx;
-        }
+        updateUI(progress);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Arrow navigation — scroll to target slide
+      function goToSlide(idx) {
+        idx = Math.max(0, Math.min(slides - 1, idx));
+        var wrapTop = wrap.getBoundingClientRect().top + window.scrollY;
+        var maxScroll = wrap.offsetHeight - window.innerHeight;
+        var targetScroll = wrapTop + (idx / (slides - 1)) * maxScroll;
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
       }
 
-      window.addEventListener('scroll', function () {
-        requestAnimationFrame(onScroll);
-      }, { passive: true });
-      onScroll();
+      if (prevBtn) prevBtn.addEventListener('click', function () {
+        goToSlide(currentSlide - 1);
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function () {
+        goToSlide(currentSlide + 1);
+      });
+
+      // Keyboard: left/right arrows when section is in view
+      document.addEventListener('keydown', function (e) {
+        var rect = wrap.getBoundingClientRect();
+        if (rect.top > window.innerHeight || rect.bottom < 0) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          goToSlide(currentSlide + 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          goToSlide(currentSlide - 1);
+        }
+      });
     })();
 
     /* ---------- ROCKET ARC FLIGHT + FIREWORKS (Canvas-based) ---------- */
