@@ -351,19 +351,19 @@
           var cy = pos.y + padTop;
 
           // Spawn orbits
-          if (!exploded && elapsed - lastOrbit > 180) {
+          if (!exploded && elapsed - lastOrbit > 200) {
             orbits.push({
               a: Math.random() * 6.283, r: 20 + Math.random() * 30,
               s: (2.5 + Math.random() * 3) * (Math.random() > 0.5 ? 1 : -1),
-              sz: 2 + Math.random() * 2.5, life: 1, d: 0.025,
+              sz: 2 + Math.random() * 2.5, life: 1, d: 0.04,
               c: GOLD[Math.floor(Math.random() * 4)]
             });
             lastOrbit = elapsed;
           }
 
           // Spawn puffs
-          if (!exploded && elapsed - lastPuff > 140 && t < 0.92) {
-            puffs.push({ x: cx, y: cy, sz: 3 + Math.random() * 5, life: 1, d: 0.035 });
+          if (!exploded && elapsed - lastPuff > 160 && t < 0.9) {
+            puffs.push({ x: cx, y: cy, sz: 3 + Math.random() * 5, life: 1, d: 0.05 });
             lastPuff = elapsed;
           }
 
@@ -395,7 +395,7 @@
 
           // Flash — two flat circles (no gradient = fast)
           if (flashLife > 0) {
-            var fr = (1 - flashLife) * 200 + 10;
+            var fr = (1 - flashLife) * 140 + 10;
             // Outer glow
             ctx.globalAlpha = flashLife * 0.2;
             ctx.fillStyle = '#D4AF37';
@@ -404,19 +404,19 @@
             ctx.globalAlpha = flashLife * 0.55;
             ctx.fillStyle = '#F5D060';
             ctx.beginPath(); ctx.arc(expPt.x, expPt.y, fr * 0.4, 0, 6.283); ctx.fill();
-            flashLife -= 0.02;
+            flashLife -= 0.04;
           }
 
           // Rings (inlined, no array overhead)
           if (ringLife1 > 0) {
-            ringR1 += (220 - ringR1) * 0.06; ringLife1 -= 0.02;
-            ctx.globalAlpha = ringLife1 * 0.4;
+            ringR1 += (180 - ringR1) * 0.08; ringLife1 -= 0.035;
+            ctx.globalAlpha = ringLife1 * 0.35;
             ctx.strokeStyle = '#F5D060'; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.arc(expPt.x, expPt.y, ringR1, 0, 6.283); ctx.stroke();
           }
           if (ringLife2 > 0) {
-            ringR2 += (180 - ringR2) * 0.06; ringLife2 -= 0.018;
-            ctx.globalAlpha = ringLife2 * 0.3;
+            ringR2 += (150 - ringR2) * 0.08; ringLife2 -= 0.03;
+            ctx.globalAlpha = ringLife2 * 0.25;
             ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.arc(expPt.x, expPt.y, ringR2, 0, 6.283); ctx.stroke();
           }
@@ -462,17 +462,17 @@
             ringLife2 = 0; // delayed start
             setTimeout(function () { ringLife2 = 1; }, 120);
 
-            for (var bi = 0; bi < 20; bi++) {
-              var ba = (6.283 / 20) * bi + (Math.random() - 0.5) * 0.3;
+            for (var bi = 0; bi < 10; bi++) {
+              var ba = (6.283 / 10) * bi + (Math.random() - 0.5) * 0.3;
               bursts.push({
                 x: cx, y: cy,
                 vx: Math.cos(ba) * (1.5 + Math.random() * 2.5),
                 vy: Math.sin(ba) * (1.5 + Math.random() * 2.5),
-                sz: 1.5 + Math.random() * 2, life: 1, d: 0.025
+                sz: 1.5 + Math.random() * 2, life: 1, d: 0.04
               });
             }
 
-            for (var ri = 0; ri < 30; ri++) {
+            for (var ri = 0; ri < 12; ri++) {
               var ra = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.8;
               var rd = 0.4 + Math.random() * 1.6;
               rains.push({
@@ -481,24 +481,26 @@
                 vy: Math.sin(ra) * rd,
                 g: 0.025 + Math.random() * 0.02,
                 sz: 1.5 + Math.random() * 2.5, life: 1,
-                d: 0.006 + Math.random() * 0.004,
-                wait: Math.floor(Math.random() * 10)
+                d: 0.012 + Math.random() * 0.006,
+                wait: Math.floor(Math.random() * 6)
               });
             }
 
-            // Illuminate keywords
+            // Illuminate keywords — wait until particles have mostly cleared
             setTimeout(function () {
-              var words = document.querySelectorAll('.glow-word');
-              words.forEach(function (w, idx) {
-                setTimeout(function () { w.classList.add('lit'); }, idx * 90);
+              requestAnimationFrame(function () {
+                var words = document.querySelectorAll('.glow-word');
+                words.forEach(function (w, idx) {
+                  setTimeout(function () { w.classList.add('lit'); }, idx * 90);
+                });
+                var texts = document.querySelectorAll('.story-text');
+                texts.forEach(function (txt, idx) {
+                  setTimeout(function () { txt.classList.add('illuminated'); }, 200 + idx * 150);
+                });
+                var label = document.querySelector('.story-grid__left .label');
+                if (label) label.classList.add('illuminated');
               });
-              var texts = document.querySelectorAll('.story-text');
-              texts.forEach(function (txt, idx) {
-                setTimeout(function () { txt.classList.add('illuminated'); }, 200 + idx * 150);
-              });
-              var label = document.querySelector('.story-grid__left .label');
-              if (label) label.classList.add('illuminated');
-            }, 500);
+            }, 1100);
           }
 
           // Continue or clean up
