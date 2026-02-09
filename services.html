@@ -3,19 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Services &amp; Pricing — LuminArch</title>
-<meta name="description" content="Premium website design and development services starting at $499. Custom designs, responsive development, SEO, and ongoing support.">
+<title>Website Design Services &amp; Pricing — LuminArch | Starting at $499</title>
+<meta name="description" content="Premium website design and development services starting at $499. Custom web design, graphic design, responsive development, SEO, AI chatbot, and ongoing support for small businesses in North Carolina.">
+<meta name="keywords" content="website design services, web design pricing, affordable website design, small business website cost, custom web development, graphic design services, SEO services, website packages, North Carolina">
+<link rel="canonical" href="https://lumin-arch.vercel.app/services.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Website Design Services & Pricing — LuminArch | Starting at $499">
+<meta property="og:description" content="Custom website design and development for small businesses. No templates, no page builders — starting at $499.">
+<meta property="og:url" content="https://lumin-arch.vercel.app/services.html">
+<meta property="og:site_name" content="LuminArch">
+<meta property="og:image" content="https://lumin-arch.vercel.app/images/logo.png">
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Schema.org Service -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Website Design and Development",
+  "provider": {
+    "@type": "ProfessionalService",
+    "name": "LuminArch",
+    "url": "https://lumin-arch.vercel.app"
+  },
+  "areaServed": {"@type": "State", "name": "North Carolina"},
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "USD",
+    "description": "Complete custom website — design, development, hosting setup, mobile-responsive."
+  }
+}
+</script>
 </head>
 <body>
-<div class="grain"></div><div class="cursor-dot"></div><div class="page-transition"></div>
+<!-- Loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="images/logo.png" alt="LuminArch" class="page-loader__logo" width="64" height="64">
+  <div class="page-loader__bar"><div class="page-loader__bar-fill"></div></div>
+</div>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
 
 <nav class="nav" id="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__logo">
-      <img src="images/logo.png" alt="LuminArch" class="nav__logo-icon">
+      <img src="images/logo.png" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
       <span class="nav__logo-text">LuminArch</span>
     </a>
     <div class="nav__links">
@@ -48,11 +89,11 @@
   <div class="container">
     <div class="service-block reveal">
       <div class="service-block__header"><span class="label accent-text">01</span><h2 class="h2">Custom Website Design</h2></div>
-      <div class="service-block__body"><p class="body-lg">Every site we design is built from scratch — no templates, no page builders. We craft bespoke experiences that reflect your brand's identity.</p><ul class="service-block__list"><li>Brand-Aligned Visual Design</li><li>Wireframing &amp; Prototyping</li><li>Mobile-First Responsive Layouts</li><li>Typography &amp; Color Systems</li><li>Design System Creation</li></ul></div>
+      <div class="service-block__body"><p class="body-lg">Every site we design is built from scratch &mdash; no templates, no page builders. We craft bespoke experiences that reflect your brand&rsquo;s identity.</p><ul class="service-block__list"><li>Brand-Aligned Visual Design</li><li>Wireframing &amp; Prototyping</li><li>Mobile-First Responsive Layouts</li><li>Typography &amp; Color Systems</li><li>Design System Creation</li></ul></div>
     </div><div class="divider"></div>
     <div class="service-block reveal">
       <div class="service-block__header"><span class="label accent-text">02</span><h2 class="h2">Web Development</h2></div>
-      <div class="service-block__body"><p class="body-lg">Clean, hand-written code that's fast, accessible, and built to last. We develop performant sites that work flawlessly across every device.</p><ul class="service-block__list"><li>HTML, CSS, JavaScript Development</li><li>CMS Integration &amp; Setup</li><li>Performance Optimization</li><li>SEO-Ready Architecture</li><li>Hosting &amp; Deployment</li></ul></div>
+      <div class="service-block__body"><p class="body-lg">Clean, hand-written code that&rsquo;s fast, accessible, and built to last. We develop performant sites that work flawlessly across every device.</p><ul class="service-block__list"><li>HTML, CSS, JavaScript Development</li><li>CMS Integration &amp; Setup</li><li>Performance Optimization</li><li>SEO-Ready Architecture</li><li>Hosting &amp; Deployment</li></ul></div>
     </div><div class="divider"></div>
     <div class="service-block reveal">
       <div class="service-block__header"><span class="label accent-text">03</span><h2 class="h2">UI/UX Strategy</h2></div>
@@ -83,9 +124,9 @@
 <section class="section" style="text-align:center">
   <div class="container">
     <div class="reveal">
-      <h2 class="h2">Let's figure out what you need</h2>
-      <p class="body-lg" style="color:var(--gray-light);margin:16px auto 40px;max-width:480px">Every project starts with a conversation. Tell us what you're trying to achieve.</p>
-      <a href="contact.html" class="btn btn--filled">Start a Project <span class="btn-arrow">&rarr;</span></a>
+      <h2 class="h2">Let&rsquo;s figure out what you need</h2>
+      <p class="body-lg" style="color:var(--gray-light);margin:16px auto 40px;max-width:480px">Every project starts with a conversation. Tell us what you&rsquo;re trying to achieve.</p>
+      <a href="contact.html" class="btn btn--filled magnetic">Start a Project <span class="btn-arrow">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -98,7 +139,7 @@
       <p class="body-lg" style="color:var(--gray-light);max-width:560px;margin-top:16px">No hidden fees. No surprises. Just honest pricing for professional websites.</p>
     </div>
     <div class="pricing-grid">
-      <div class="pricing-main reveal">
+      <div class="pricing-main tilt-card reveal">
         <span class="label" style="color:var(--gray-light)">Base Package</span>
         <div class="pricing-main__price">$499</div>
         <div class="pricing-main__title">Complete Website</div>
@@ -112,7 +153,7 @@
           <li>Additional necessary pages included</li>
           <li>Fast loading &amp; SEO-friendly structure</li>
         </ul>
-        <a href="contact.html" class="btn btn--filled" style="width:100%;justify-content:center;margin-top:32px">Get Started <span class="btn-arrow">&rarr;</span></a>
+        <a href="contact.html" class="btn btn--filled magnetic" style="width:100%;justify-content:center;margin-top:32px">Get Started <span class="btn-arrow">&rarr;</span></a>
       </div>
       <div class="pricing-addons reveal">
         <div class="label" style="color:var(--gray-light);margin-bottom:8px">Add-Ons</div>
@@ -143,7 +184,7 @@
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">
-          <img src="images/logo.png" alt="" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))"> LuminArch
+          <img src="images/logo.png" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
         </div>
         <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
       </div>
@@ -158,14 +199,12 @@
         </div>
         <div class="footer__col">
           <div class="footer__col-title">Connect</div>
-          <a href="mailto:hello@luminarch.dev">hello@luminarch.dev</a>
-          <a href="#">Twitter / X</a>
-          <a href="#">LinkedIn</a>
+          <a href="mailto:luminarch2026@gmail.com">luminarch2026@gmail.com</a>
         </div>
       </div>
     </div>
     <div class="footer__bottom">
-      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved.</span>
+      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved. &bull; North Carolina</span>
       <div class="footer__bottom-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>

@@ -3,19 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About — LuminArch</title>
-<meta name="description" content="LuminArch is a North Carolina digital agency bridging the gap between small businesses and premium web experiences.">
+<title>About LuminArch — Web Design Studio in North Carolina</title>
+<meta name="description" content="LuminArch is a North Carolina digital agency bridging the gap between small businesses and premium website design. Hand-coded websites, no templates — just clean, fast, responsive web design.">
+<meta name="keywords" content="about LuminArch, web design studio, North Carolina web agency, graphic design, custom websites, small business web design">
+<link rel="canonical" href="https://lumin-arch.vercel.app/about.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="About LuminArch — Web Design Studio in North Carolina">
+<meta property="og:description" content="We bridge the gap between small businesses and premium web experiences. Hand-coded websites, no templates.">
+<meta property="og:url" content="https://lumin-arch.vercel.app/about.html">
+<meta property="og:site_name" content="LuminArch">
+<meta property="og:image" content="https://lumin-arch.vercel.app/images/logo.png">
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="grain"></div><div class="cursor-dot"></div><div class="page-transition"></div>
+<!-- Loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="images/logo.png" alt="LuminArch" class="page-loader__logo" width="64" height="64">
+  <div class="page-loader__bar"><div class="page-loader__bar-fill"></div></div>
+</div>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
 
 <nav class="nav" id="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__logo">
-      <img src="images/logo.png" alt="LuminArch" class="nav__logo-icon">
+      <img src="images/logo.png" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
       <span class="nav__logo-text">LuminArch</span>
     </a>
     <div class="nav__links">
@@ -63,10 +84,26 @@
       <h2 class="h2">What we believe</h2>
     </div>
     <div class="values-grid stagger-children">
-      <div class="value-card reveal"><h3 class="h3">Craft Over Convention</h3><p class="body-sm" style="color:var(--gray-light)">We don't use templates. Every project is built from scratch to solve a unique problem in a unique way.</p></div>
-      <div class="value-card reveal"><h3 class="h3">Obsess the Details</h3><p class="body-sm" style="color:var(--gray-light)">The difference between good and unforgettable lives in the details — the micro-interactions, the typography, the load time.</p></div>
-      <div class="value-card reveal"><h3 class="h3">Technology as Medium</h3><p class="body-sm" style="color:var(--gray-light)">We treat code the way artists treat paint. Technology isn't a constraint — it's our creative medium.</p></div>
-      <div class="value-card reveal"><h3 class="h3">Radical Transparency</h3><p class="body-sm" style="color:var(--gray-light)">No black boxes. Clients see our work, understand our decisions, and own their outcomes.</p></div>
+      <div class="value-card tilt-card reveal"><h3 class="h3">Craft Over Convention</h3><p class="body-sm" style="color:var(--gray-light)">We don&rsquo;t use templates. Every project is built from scratch to solve a unique problem in a unique way.</p></div>
+      <div class="value-card tilt-card reveal"><h3 class="h3">Obsess the Details</h3><p class="body-sm" style="color:var(--gray-light)">The difference between good and unforgettable lives in the details &mdash; the micro-interactions, the typography, the load time.</p></div>
+      <div class="value-card tilt-card reveal"><h3 class="h3">Technology as Medium</h3><p class="body-sm" style="color:var(--gray-light)">We treat code the way artists treat paint. Technology isn&rsquo;t a constraint &mdash; it&rsquo;s our creative medium.</p></div>
+      <div class="value-card tilt-card reveal"><h3 class="h3">Radical Transparency</h3><p class="body-sm" style="color:var(--gray-light)">No black boxes. Clients see our work, understand our decisions, and own their outcomes.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Why LuminArch — fills dead space -->
+<section class="section">
+  <div class="container" style="text-align:center">
+    <div class="section-header reveal">
+      <span class="label accent-text">Why Choose Us</span>
+      <h2 class="h2">What sets us <em class="italic">apart</em></h2>
+    </div>
+    <div class="stats-grid stagger-children" style="border-top:1px solid var(--gray-mid);border-bottom:1px solid var(--gray-mid);padding:clamp(32px,4vh,56px) 0">
+      <div class="stat reveal"><span class="stat__number h2 accent-text">$499</span><span class="stat__label body-sm" style="color:var(--gray-light)">Starting Price</span></div>
+      <div class="stat reveal"><span class="stat__number h2 accent-text">0</span><span class="stat__label body-sm" style="color:var(--gray-light)">Templates Used</span></div>
+      <div class="stat reveal"><span class="stat__number h2 accent-text">100%</span><span class="stat__label body-sm" style="color:var(--gray-light)">Hand-Coded</span></div>
+      <div class="stat reveal"><span class="stat__number h2 accent-text">24hr</span><span class="stat__label body-sm" style="color:var(--gray-light)">Response Time</span></div>
     </div>
   </div>
 </section>
@@ -76,7 +113,7 @@
     <div class="reveal">
       <h2 class="h2">Ready to get <em class="italic">started?</em></h2>
       <p class="body-lg" style="color:var(--gray-light);margin:16px auto 40px;max-width:440px">Your website is the first impression your customers see. Make it one that lasts &mdash; starting at just $499.</p>
-      <a href="contact.html" class="btn btn--filled">Get a Quote <span class="btn-arrow">&rarr;</span></a>
+      <a href="contact.html" class="btn btn--filled magnetic">Get a Quote <span class="btn-arrow">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -86,7 +123,7 @@
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">
-          <img src="images/logo.png" alt="" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))"> LuminArch
+          <img src="images/logo.png" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
         </div>
         <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
       </div>
@@ -101,14 +138,12 @@
         </div>
         <div class="footer__col">
           <div class="footer__col-title">Connect</div>
-          <a href="mailto:hello@luminarch.dev">hello@luminarch.dev</a>
-          <a href="#">Twitter / X</a>
-          <a href="#">LinkedIn</a>
+          <a href="mailto:luminarch2026@gmail.com">luminarch2026@gmail.com</a>
         </div>
       </div>
     </div>
     <div class="footer__bottom">
-      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved.</span>
+      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved. &bull; North Carolina</span>
       <div class="footer__bottom-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>

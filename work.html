@@ -3,19 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Work — LuminArch</title>
-<meta name="description" content="See our portfolio of modern web experiences built for small businesses in North Carolina.">
+<title>Our Work — Website Design Portfolio | LuminArch</title>
+<meta name="description" content="See our portfolio of modern, hand-coded websites built for small businesses in North Carolina. Custom web design, graphic design, and development projects by LuminArch.">
+<meta name="keywords" content="web design portfolio, website examples, custom websites, small business websites, graphic design portfolio, North Carolina web design">
+<link rel="canonical" href="https://lumin-arch.vercel.app/work.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Our Work — Website Design Portfolio | LuminArch">
+<meta property="og:description" content="Real projects, real results. Hand-coded websites for small businesses in North Carolina.">
+<meta property="og:url" content="https://lumin-arch.vercel.app/work.html">
+<meta property="og:site_name" content="LuminArch">
+<meta property="og:image" content="https://lumin-arch.vercel.app/images/project1.png">
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="grain"></div><div class="cursor-dot"></div><div class="page-transition"></div>
+<!-- Loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="images/logo.png" alt="LuminArch" class="page-loader__logo" width="64" height="64">
+  <div class="page-loader__bar"><div class="page-loader__bar-fill"></div></div>
+</div>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
 
 <nav class="nav" id="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__logo">
-      <img src="images/logo.png" alt="LuminArch" class="nav__logo-icon">
+      <img src="images/logo.png" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
       <span class="nav__logo-text">LuminArch</span>
     </a>
     <div class="nav__links">
@@ -48,9 +69,9 @@
   <div class="container">
 
     <!-- PROJECT 1: Carter & Carter -->
-    <a href="https://carter-carter-site.vercel.app/" target="_blank" rel="noopener" class="project-full reveal">
+    <a href="https://carter-carter-site.vercel.app/" target="_blank" rel="noopener" class="project-full tilt-card reveal">
       <div class="project-full__visual">
-        <img src="images/project1.png" alt="Carter and Carter Law Firm Website">
+        <img src="images/project1.png" alt="Carter and Carter Law Firm — custom website design by LuminArch" loading="lazy" width="1200" height="571">
         <div class="project-full__overlay"><span class="project-full__overlay-text">View Live Site &rarr;</span></div>
       </div>
       <div class="project-full__header">
@@ -71,9 +92,9 @@
     <div class="divider" style="margin-bottom:clamp(60px,10vh,120px)"></div>
 
     <!-- PROJECT 2: MK Traditions -->
-    <a href="https://mktraditions.vercel.app/" target="_blank" rel="noopener" class="project-full reveal">
+    <a href="https://mktraditions.vercel.app/" target="_blank" rel="noopener" class="project-full tilt-card reveal">
       <div class="project-full__visual">
-        <img src="images/project2.jpg" alt="MK Traditions Event Planning Website">
+        <img src="images/project2.jpg" alt="MK Traditions Event Planning — custom website by LuminArch" loading="lazy" width="1200" height="571">
         <div class="project-full__overlay"><span class="project-full__overlay-text">View Live Site &rarr;</span></div>
       </div>
       <div class="project-full__header">
@@ -105,7 +126,7 @@
     <div class="reveal">
       <h2 class="h2">Your project could be next</h2>
       <p class="body-lg" style="color:var(--gray-light);margin:16px auto 40px;max-width:440px">We&rsquo;re taking on new clients. Let&rsquo;s create something worth showing off.</p>
-      <a href="contact.html" class="btn btn--filled">Start a Project <span class="btn-arrow">&rarr;</span></a>
+      <a href="contact.html" class="btn btn--filled magnetic">Start a Project <span class="btn-arrow">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -115,7 +136,7 @@
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">
-          <img src="images/logo.png" alt="" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))"> LuminArch
+          <img src="images/logo.png" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
         </div>
         <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
       </div>
@@ -130,9 +151,7 @@
         </div>
         <div class="footer__col">
           <div class="footer__col-title">Connect</div>
-          <a href="mailto:hello@luminarch.dev">hello@luminarch.dev</a>
-          <a href="#">Twitter / X</a>
-          <a href="#">LinkedIn</a>
+          <a href="mailto:luminarch2026@gmail.com">luminarch2026@gmail.com</a>
         </div>
       </div>
     </div>

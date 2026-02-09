@@ -43,9 +43,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cursor-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:10000;mix-blend-mode:difference;transition:transform .15s ease;transform:translate(-50%,-50%)}
 .cursor-dot.hovering{transform:translate(-50%,-50%) scale(4);opacity:.5}
 
-/* PAGE TRANSITION */
-.page-transition{position:fixed;inset:0;background:var(--black);z-index:9999;pointer-events:none;opacity:1;transition:opacity .6s ease}
-.page-transition.done{opacity:0}
+/* GLOBAL BACKGROUND LINES */
+.bg-lines{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;justify-content:space-between;padding:0 var(--pad)}
+.bg-lines span{width:1px;height:100%;background:rgba(255,255,255,.04)}
+
+/* PAGE LOADER */
+.page-loader{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
+.page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.page-loader__logo{width:64px;height:auto;opacity:0;transform:scale(.9);animation:loaderLogoIn .6s var(--ease-out-expo) .1s forwards;filter:drop-shadow(0 0 20px var(--accent-glow))}
+.page-loader__bar{width:48px;height:2px;background:var(--gray-mid);margin-top:20px;border-radius:1px;overflow:hidden;opacity:0;animation:loaderFadeIn .4s ease .3s forwards}
+.page-loader__bar-fill{width:0;height:100%;background:var(--accent);border-radius:1px;animation:loaderBarFill 1s var(--ease-out-expo) .4s forwards}
+@keyframes loaderLogoIn{to{opacity:1;transform:scale(1)}}
+@keyframes loaderFadeIn{to{opacity:1}}
+@keyframes loaderBarFill{to{width:100%}}
+
+/* LEGACY: page-transition fallback */
+.page-transition{display:none}
 
 /* NAV */
 .nav{position:fixed;top:0;left:0;width:100%;height:var(--nav-height);z-index:1000;display:flex;align-items:center;padding:0 var(--pad);transition:background .4s ease}
@@ -306,6 +319,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .form-success{position:absolute;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
 .form-success.visible{opacity:1;pointer-events:all}
 .form-success__icon{width:64px;height:64px;border-radius:50%;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:20px}
+
+/* MAGNETIC BUTTONS */
+.magnetic{transition:transform .3s var(--ease-out-expo);will-change:transform}
+
+/* 3D TILT CARDS */
+.tilt-card{transition:transform .4s var(--ease-out-expo);will-change:transform;transform-style:preserve-3d}
+
+/* PARTICLE CANVAS */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
 
 /* RESPONSIVE */
 @media(max-width:768px){

@@ -3,19 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact — LuminArch</title>
-<meta name="description" content="Start a project with LuminArch. Tell us about your vision and get a custom website starting at $499.">
+<title>Contact LuminArch — Get a Custom Website Quote</title>
+<meta name="description" content="Start a project with LuminArch. Get a custom website quote for your small business — web design, graphic design, and development starting at $499. North Carolina web agency.">
+<meta name="keywords" content="contact web designer, get a website quote, custom website pricing, website design North Carolina, small business website cost, hire web designer">
+<link rel="canonical" href="https://lumin-arch.vercel.app/contact.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact LuminArch — Get a Custom Website Quote">
+<meta property="og:description" content="Tell us about your vision. Custom websites for small businesses starting at $499.">
+<meta property="og:url" content="https://lumin-arch.vercel.app/contact.html">
+<meta property="og:site_name" content="LuminArch">
+<meta property="og:image" content="https://lumin-arch.vercel.app/images/logo.png">
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="grain"></div><div class="cursor-dot"></div><div class="page-transition"></div>
+<!-- Loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="images/logo.png" alt="LuminArch" class="page-loader__logo" width="64" height="64">
+  <div class="page-loader__bar"><div class="page-loader__bar-fill"></div></div>
+</div>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
 
 <nav class="nav" id="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__logo">
-      <img src="images/logo.png" alt="LuminArch" class="nav__logo-icon">
+      <img src="images/logo.png" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
       <span class="nav__logo-text">LuminArch</span>
     </a>
     <div class="nav__links">
@@ -40,7 +61,7 @@
   <div class="container">
     <span class="label accent-text reveal">Contact</span>
     <h1 class="h1 reveal" style="margin-top:12px">Start a <em class="italic">project</em></h1>
-    <p class="body-lg reveal" style="color:var(--gray-light);max-width:520px;margin-top:20px">Tell us about your vision. The more detail, the better — but even a rough idea is a great starting point.</p>
+    <p class="body-lg reveal" style="color:var(--gray-light);max-width:520px;margin-top:20px">Tell us about your vision. The more detail, the better &mdash; but even a rough idea is a great starting point.</p>
   </div>
 </section>
 
@@ -64,7 +85,7 @@
             </select>
           </div>
           <div class="form-group"><label class="label" for="message">Tell us about your business</label><textarea id="message" name="message" rows="4" placeholder="What does your business do? Do you have a current website? Any specific features you need?"></textarea></div>
-          <button type="submit" class="btn btn--filled" style="width:100%;justify-content:center">Send Message <span class="btn-arrow">&rarr;</span></button>
+          <button type="submit" class="btn btn--filled magnetic" style="width:100%;justify-content:center">Send Message <span class="btn-arrow">&rarr;</span></button>
           <div class="form-success" id="formSuccess">
             <div class="form-success__icon">&#10003;</div>
             <h3 class="h3">Message sent!</h3>
@@ -75,22 +96,19 @@
       <div class="contact-info reveal">
         <div class="contact-info__block">
           <span class="label accent-text">Email Us</span>
-          <a href="mailto:hello@luminarch.dev" class="h3" style="display:block;margin-top:8px;font-size:clamp(.9rem,1.5vw,1.15rem)">hello@luminarch.dev</a>
+          <a href="mailto:luminarch2026@gmail.com" class="h3" style="display:block;margin-top:8px;font-size:clamp(.9rem,1.5vw,1.15rem)">luminarch2026@gmail.com</a>
         </div>
         <div class="contact-info__block">
           <span class="label accent-text">Location</span>
           <p class="body-lg" style="color:var(--gray-muted);margin-top:8px">North Carolina, USA</p>
         </div>
         <div class="contact-info__block">
-          <span class="label accent-text">Follow</span>
-          <div class="contact-socials">
-            <a href="#" class="body-sm">Twitter / X &#8599;</a>
-            <a href="#" class="body-sm">LinkedIn &#8599;</a>
-          </div>
-        </div>
-        <div class="contact-info__block">
           <span class="label accent-text">Response Time</span>
           <p class="body-sm" style="color:var(--gray-muted);margin-top:8px">We respond within 24 hours. For urgent inquiries, email us directly.</p>
+        </div>
+        <div class="contact-info__block">
+          <span class="label accent-text">What to expect</span>
+          <p class="body-sm" style="color:var(--gray-muted);margin-top:8px">After you reach out, we&rsquo;ll schedule a short discovery call to understand your goals, then deliver a custom proposal within 48 hours.</p>
         </div>
       </div>
     </div>
@@ -102,7 +120,7 @@
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">
-          <img src="images/logo.png" alt="" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))"> LuminArch
+          <img src="images/logo.png" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
         </div>
         <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
       </div>
@@ -117,14 +135,12 @@
         </div>
         <div class="footer__col">
           <div class="footer__col-title">Connect</div>
-          <a href="mailto:hello@luminarch.dev">hello@luminarch.dev</a>
-          <a href="#">Twitter / X</a>
-          <a href="#">LinkedIn</a>
+          <a href="mailto:luminarch2026@gmail.com">luminarch2026@gmail.com</a>
         </div>
       </div>
     </div>
     <div class="footer__bottom">
-      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved.</span>
+      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved. &bull; North Carolina</span>
       <div class="footer__bottom-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
