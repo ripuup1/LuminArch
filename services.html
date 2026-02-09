@@ -29,14 +29,47 @@
   "provider": {
     "@type": "ProfessionalService",
     "name": "LuminArch",
-    "url": "https://lumin-arch.vercel.app"
+    "url": "https://lumin-arch.vercel.app",
+    "email": "luminarch2026@gmail.com",
+    "image": "https://lumin-arch.vercel.app/images/logo.png"
   },
-  "areaServed": {"@type": "State", "name": "North Carolina"},
-  "offers": {
-    "@type": "Offer",
-    "price": "499",
-    "priceCurrency": "USD",
-    "description": "Complete custom website — design, development, hosting setup, mobile-responsive."
+  "areaServed": [
+    {"@type": "State", "name": "North Carolina"},
+    {"@type": "Country", "name": "United States"}
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Website Packages",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Base Website",
+        "price": "499",
+        "priceCurrency": "USD",
+        "description": "Complete custom website — design, development, hosting setup, mobile-responsive, unlimited revisions."
+      },
+      {
+        "@type": "Offer",
+        "name": "Website + SEO Optimization",
+        "price": "749",
+        "priceCurrency": "USD",
+        "description": "Custom website with keyword research, meta tag optimization, schema markup, Google Business Profile setup, and sitemap submission."
+      },
+      {
+        "@type": "Offer",
+        "name": "Website + AI Chatbot",
+        "price": "749",
+        "priceCurrency": "USD",
+        "description": "Custom website with AI-powered chatbot trained on your business information for 24/7 customer support."
+      },
+      {
+        "@type": "Offer",
+        "name": "Monthly Maintenance Plan",
+        "price": "50",
+        "priceCurrency": "USD",
+        "description": "Ongoing website updates, content changes, and technical support within 3 business days."
+      }
+    ]
   }
 }
 </script>

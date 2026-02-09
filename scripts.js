@@ -299,34 +299,10 @@
       }
 
       function runAnimation(pts) {
-        // Canvas at 1x DPR — particles are small, retina not needed
-        // This is the #1 perf optimization (4x fewer pixels to clear)
-        var padTop = 200;
-        var padBot = 200;
-        var cw = container.offsetWidth;
-        var ch = container.offsetHeight + padTop + padBot;
-
-        var cvs = document.createElement('canvas');
-        cvs.width = cw;
-        cvs.height = ch;
-        cvs.style.cssText = 'position:absolute;left:0;top:-' + padTop + 'px;width:' + cw + 'px;height:' + ch + 'px;pointer-events:none;z-index:10;';
-        container.appendChild(cvs);
-        var ctx = cvs.getContext('2d');
-
         var DURATION = 2200;
         var startTime = null;
         var exploded = false;
-        var expPt = null;
-        var lastOrbit = 0;
-        var lastPuff = 0;
-
-        var orbits = [];
-        var puffs = [];
-        var bursts = [];
-        var rains = [];
-        var ringR1 = 0, ringR2 = 0, ringLife1 = 0, ringLife2 = 0;
-        var flashLife = 0;
-        var GOLD = ['#F5D060', '#F5A623', '#D4AF37', '#FFF4D2'];
+        var impact = arc.querySelector('.rocket-arc__impact');
 
         ship.classList.add('flying');
         pathEl.classList.add('drawing');
@@ -340,116 +316,15 @@
           var pos = quadBezier(eased, pts.p0, pts.p1, pts.p2);
           var angle = quadBezierAngle(eased, pts.p0, pts.p1, pts.p2);
 
-          if (!exploded) {
-            ship.style.left = (pos.x - 36) + 'px';
-            ship.style.top = (pos.y - 36) + 'px';
-            ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
-            pathEl.style.strokeDashoffset = pts.len * (1 - eased);
-          }
+          ship.style.left = (pos.x - 36) + 'px';
+          ship.style.top = (pos.y - 36) + 'px';
+          ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
+          pathEl.style.strokeDashoffset = pts.len * (1 - eased);
 
-          var cx = pos.x;
-          var cy = pos.y + padTop;
-
-          // Spawn orbits
-          if (!exploded && elapsed - lastOrbit > 200) {
-            orbits.push({
-              a: Math.random() * 6.283, r: 20 + Math.random() * 30,
-              s: (2.5 + Math.random() * 3) * (Math.random() > 0.5 ? 1 : -1),
-              sz: 2 + Math.random() * 2.5, life: 1, d: 0.04,
-              c: GOLD[Math.floor(Math.random() * 4)]
-            });
-            lastOrbit = elapsed;
-          }
-
-          // Spawn puffs
-          if (!exploded && elapsed - lastPuff > 160 && t < 0.9) {
-            puffs.push({ x: cx, y: cy, sz: 3 + Math.random() * 5, life: 1, d: 0.05 });
-            lastPuff = elapsed;
-          }
-
-          // --- DRAW ---
-          ctx.clearRect(0, 0, cw, ch);
-          var i, p;
-
-          // Puffs
-          for (i = puffs.length - 1; i >= 0; i--) {
-            p = puffs[i]; p.life -= p.d; p.sz += 0.3;
-            if (p.life <= 0) { puffs.splice(i, 1); continue; }
-            ctx.globalAlpha = p.life * 0.15;
-            ctx.fillStyle = '#D4AF37';
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 6.283); ctx.fill();
-          }
-
-          // Orbits
-          var ocx = exploded ? expPt.x : cx;
-          var ocy = exploded ? expPt.y : cy;
-          for (i = orbits.length - 1; i >= 0; i--) {
-            p = orbits[i]; p.a += p.s * 0.04; p.life -= p.d;
-            if (p.life <= 0) { orbits.splice(i, 1); continue; }
-            ctx.globalAlpha = p.life;
-            ctx.fillStyle = p.c;
-            ctx.beginPath();
-            ctx.arc(ocx + Math.cos(p.a) * p.r, ocy + Math.sin(p.a) * p.r, p.sz, 0, 6.283);
-            ctx.fill();
-          }
-
-          // Flash — two flat circles (no gradient = fast)
-          if (flashLife > 0) {
-            var fr = (1 - flashLife) * 140 + 10;
-            // Outer glow
-            ctx.globalAlpha = flashLife * 0.2;
-            ctx.fillStyle = '#D4AF37';
-            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, fr, 0, 6.283); ctx.fill();
-            // Inner core
-            ctx.globalAlpha = flashLife * 0.55;
-            ctx.fillStyle = '#F5D060';
-            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, fr * 0.4, 0, 6.283); ctx.fill();
-            flashLife -= 0.04;
-          }
-
-          // Rings (inlined, no array overhead)
-          if (ringLife1 > 0) {
-            ringR1 += (180 - ringR1) * 0.08; ringLife1 -= 0.035;
-            ctx.globalAlpha = ringLife1 * 0.35;
-            ctx.strokeStyle = '#F5D060'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, ringR1, 0, 6.283); ctx.stroke();
-          }
-          if (ringLife2 > 0) {
-            ringR2 += (150 - ringR2) * 0.08; ringLife2 -= 0.03;
-            ctx.globalAlpha = ringLife2 * 0.25;
-            ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(expPt.x, expPt.y, ringR2, 0, 6.283); ctx.stroke();
-          }
-
-          // Burst
-          for (i = bursts.length - 1; i >= 0; i--) {
-            p = bursts[i]; p.x += p.vx; p.y += p.vy;
-            p.vx *= 0.95; p.vy *= 0.95; p.life -= p.d;
-            if (p.life <= 0) { bursts.splice(i, 1); continue; }
-            ctx.globalAlpha = p.life;
-            ctx.fillStyle = '#F5D060';
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * p.life, 0, 6.283); ctx.fill();
-          }
-
-          // Gold rain
-          for (i = rains.length - 1; i >= 0; i--) {
-            p = rains[i];
-            if (p.wait > 0) { p.wait--; continue; }
-            p.vy += p.g; p.x += p.vx; p.y += p.vy;
-            p.vx *= 0.998; p.life -= p.d;
-            if (p.life <= 0) { rains.splice(i, 1); continue; }
-            ctx.globalAlpha = Math.min(1, p.life * 1.4);
-            ctx.fillStyle = p.life > 0.5 ? '#FFF4D2' : '#F5D060';
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * Math.max(0.3, p.life), 0, 6.283); ctx.fill();
-          }
-
-          ctx.globalAlpha = 1;
-
-          // --- TRIGGER EXPLOSION ---
           if (t >= 1 && !exploded) {
             exploded = true;
-            expPt = { x: cx, y: cy };
 
+            // Hide rocket, fade trail
             ship.classList.remove('flying');
             ship.classList.add('crashed');
             setTimeout(function () {
@@ -457,59 +332,29 @@
               pathEl.classList.add('fading');
             }, 100);
 
-            flashLife = 1;
-            ringLife1 = 1;
-            ringLife2 = 0; // delayed start
-            setTimeout(function () { ringLife2 = 1; }, 120);
+            // Position impact at crash point and trigger CSS explosion
+            impact.style.left = pos.x + 'px';
+            impact.style.top = pos.y + 'px';
+            impact.classList.add('exploding');
 
-            for (var bi = 0; bi < 10; bi++) {
-              var ba = (6.283 / 10) * bi + (Math.random() - 0.5) * 0.3;
-              bursts.push({
-                x: cx, y: cy,
-                vx: Math.cos(ba) * (1.5 + Math.random() * 2.5),
-                vy: Math.sin(ba) * (1.5 + Math.random() * 2.5),
-                sz: 1.5 + Math.random() * 2, life: 1, d: 0.04
-              });
-            }
-
-            for (var ri = 0; ri < 12; ri++) {
-              var ra = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.8;
-              var rd = 0.4 + Math.random() * 1.6;
-              rains.push({
-                x: cx, y: cy,
-                vx: Math.cos(ra) * rd + (Math.random() - 0.5) * 0.6,
-                vy: Math.sin(ra) * rd,
-                g: 0.025 + Math.random() * 0.02,
-                sz: 1.5 + Math.random() * 2.5, life: 1,
-                d: 0.012 + Math.random() * 0.006,
-                wait: Math.floor(Math.random() * 6)
-              });
-            }
-
-            // Illuminate keywords — wait until particles have mostly cleared
+            // Illuminate keywords — after CSS explosion visually peaks (~700ms)
             setTimeout(function () {
-              requestAnimationFrame(function () {
-                var words = document.querySelectorAll('.glow-word');
-                words.forEach(function (w, idx) {
-                  setTimeout(function () { w.classList.add('lit'); }, idx * 90);
-                });
-                var texts = document.querySelectorAll('.story-text');
-                texts.forEach(function (txt, idx) {
-                  setTimeout(function () { txt.classList.add('illuminated'); }, 200 + idx * 150);
-                });
-                var label = document.querySelector('.story-grid__left .label');
-                if (label) label.classList.add('illuminated');
+              var words = document.querySelectorAll('.glow-word');
+              words.forEach(function (w, idx) {
+                setTimeout(function () { w.classList.add('lit'); }, idx * 90);
               });
-            }, 1100);
+              var texts = document.querySelectorAll('.story-text');
+              texts.forEach(function (txt, idx) {
+                setTimeout(function () { txt.classList.add('illuminated'); }, 200 + idx * 150);
+              });
+              var label = document.querySelector('.story-grid__left .label');
+              if (label) label.classList.add('illuminated');
+            }, 700);
+
+            return; // Animation complete — no more rAF needed
           }
 
-          // Continue or clean up
-          var alive = !exploded || orbits.length || puffs.length || bursts.length || rains.length || flashLife > 0 || ringLife1 > 0 || ringLife2 > 0;
-          if (alive) {
-            requestAnimationFrame(step);
-          } else {
-            if (cvs.parentNode) cvs.parentNode.removeChild(cvs);
-          }
+          requestAnimationFrame(step);
         }
 
         requestAnimationFrame(step);

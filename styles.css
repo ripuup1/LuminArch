@@ -28,6 +28,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .body-sm{font-size:.875rem;line-height:1.5;font-weight:400;letter-spacing:.02em}
 .label{font-family:var(--font-body);font-size:.6875rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase}
 .accent-text{color:var(--accent);text-shadow:0 0 20px var(--accent-glow)}
+.hero__title .accent-text{background:linear-gradient(90deg,var(--accent) 0%,#F5D060 40%,#FFF4D2 50%,#F5D060 60%,var(--accent) 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:goldShimmer 4s ease-in-out infinite}
+@keyframes goldShimmer{0%,100%{background-position:100% 50%}50%{background-position:0% 50%}}
 .italic{font-style:italic}
 
 /* LAYOUT */
@@ -91,8 +93,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .nav__link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--accent);transition:width .4s var(--ease-out-expo)}
 .nav__link:hover::after,.nav__link.active::after{width:100%}
 .nav__link:hover,.nav__link.active{color:var(--accent)}
-.nav__cta{font-size:.8125rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 24px;border:1px solid var(--accent);color:var(--accent);transition:all .3s ease}
-.nav__cta:hover{background:var(--accent);color:var(--black)}
+.nav__cta{font-size:.8125rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 24px;border:1px solid var(--accent);color:var(--accent);transition:all .3s ease;box-shadow:0 0 0 transparent}
+.nav__cta:hover{background:var(--accent);color:var(--black);box-shadow:0 0 20px rgba(212,175,55,0.3),0 0 40px rgba(212,175,55,0.1)}
 .nav__toggle{display:none;flex-direction:column;gap:6px;width:28px;cursor:pointer;z-index:1001}
 .nav__toggle span{display:block;width:100%;height:1.5px;background:var(--white);transition:all .3s ease}
 .nav__toggle.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
@@ -107,9 +109,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--font-body);font-size:.8125rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:16px 36px;border:1px solid var(--accent);color:var(--accent);background:transparent;position:relative;overflow:hidden;transition:color .4s ease;cursor:pointer}
 .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--accent);transition:left .4s var(--ease-out-expo);z-index:-1}
 .btn:hover::before{left:0}
-.btn:hover{color:var(--black)}
-.btn--filled{background:var(--accent);color:var(--black)}
+.btn:hover{color:var(--black);box-shadow:0 0 24px rgba(212,175,55,0.25),0 0 48px rgba(212,175,55,0.08)}
+.btn--filled{background:var(--accent);color:var(--black);box-shadow:0 0 12px rgba(212,175,55,0.15)}
 .btn--filled::before{background:var(--white)}
+.btn--filled:hover{box-shadow:0 0 28px rgba(212,175,55,0.35),0 0 56px rgba(212,175,55,0.12)}
 .btn .btn-arrow{transition:transform .3s ease}
 .btn:hover .btn-arrow{transform:translateX(4px)}
 
@@ -228,7 +231,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .about-intro__text p{color:var(--gray-light);line-height:1.7}
 .about-values{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px}
 .value-card{padding:clamp(28px,3vw,40px);border:1px solid var(--gray-mid);border-radius:2px;transition:border-color .3s ease}
-.value-card:hover{border-color:var(--accent)}
+.value-card:hover{border-color:var(--accent);box-shadow:0 0 24px rgba(212,175,55,0.08),0 0 48px rgba(212,175,55,0.03)}
 .value-card__number{font-family:var(--font-display);font-size:2.5rem;color:rgba(212,175,55,0.15);line-height:1;margin-bottom:16px}
 .value-card__title{margin-bottom:12px}
 .value-card__desc{color:var(--gray-light);font-size:.9375rem;line-height:1.6}
@@ -258,7 +261,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* ===== PAGE-SPECIFIC: SERVICES ===== */
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:32px}
 .pricing-card{padding:clamp(32px,3vw,48px);border:1px solid var(--gray-mid);border-radius:2px;display:flex;flex-direction:column;transition:border-color .3s ease}
-.pricing-card:hover{border-color:var(--accent)}
+.pricing-card:hover{border-color:var(--accent);box-shadow:0 0 24px rgba(212,175,55,0.08),0 0 48px rgba(212,175,55,0.03)}
 .pricing-card--featured{border-color:var(--accent);position:relative}
 .pricing-card__badge{position:absolute;top:0;right:24px;background:var(--accent);color:var(--black);font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px}
 .pricing-card__name{margin-bottom:8px}
@@ -271,7 +274,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* SERVICES PAGE — Service card grid */
 .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
 .svc-card{background:rgba(26,26,26,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--gray-mid);border-radius:2px;padding:clamp(24px,3vw,40px);transition:border-color .4s ease,box-shadow .4s ease;position:relative;overflow:hidden}
-.svc-card:hover{border-color:rgba(212,175,55,0.25);box-shadow:0 0 40px rgba(212,175,55,0.04)}
+.svc-card:hover{border-color:rgba(212,175,55,0.3);box-shadow:0 0 30px rgba(212,175,55,0.08),0 0 60px rgba(212,175,55,0.03)}
 .svc-card__num{position:absolute;top:-8px;right:12px;font-family:var(--font-display);font-size:clamp(4rem,7vw,6rem);color:rgba(212,175,55,0.1);line-height:1;pointer-events:none;transition:color .4s ease}
 .svc-card:hover .svc-card__num{color:rgba(212,175,55,0.16)}
 .svc-card__icon{width:44px;height:44px;border:1px solid var(--accent-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:border-color .3s ease,background .3s ease}
@@ -421,9 +424,25 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .ra-flame--core{animation-delay:.08s}
 @keyframes rocketFlame{0%{transform:scaleY(1) scaleX(1)}100%{transform:scaleY(1.12) scaleX(.9)}}
 
-/* All particle effects (orbits, puffs, burst, rain, rings, flash) are
-   rendered on a temporary <canvas> for GPU-accelerated, zero-lag performance.
-   No DOM particle classes needed. */
+/* ===== PURE CSS EXPLOSION (GPU compositor, zero main-thread work) ===== */
+.rocket-arc__impact{position:absolute;pointer-events:none;z-index:12;opacity:0}
+.rocket-arc__impact.exploding{opacity:1}
+
+/* Flash — radial glow that appears and fades */
+.impact-flash{position:absolute;left:-80px;top:-80px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(245,208,96,0.7) 0%,rgba(212,175,55,0.3) 40%,transparent 70%);opacity:0;will-change:transform,opacity}
+.exploding .impact-flash{animation:impactFlash .7s ease-out forwards}
+@keyframes impactFlash{0%{opacity:1;transform:scale(0.3)}30%{opacity:.8;transform:scale(1.2)}100%{opacity:0;transform:scale(2)}}
+
+/* Expanding rings */
+.impact-ring{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;border:1.5px solid #F5D060;opacity:0;will-change:transform,opacity}
+.exploding .impact-ring{animation:impactRing .9s ease-out forwards}
+.exploding .impact-ring--2{animation:impactRing .9s ease-out .1s forwards;border-color:#D4AF37}
+@keyframes impactRing{0%{opacity:.6;transform:scale(1)}50%{opacity:.3;transform:scale(18)}100%{opacity:0;transform:scale(28)}}
+
+/* Sparks — fly outward from center */
+.impact-spark{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:#F5D060;opacity:0;will-change:transform,opacity}
+.exploding .impact-spark{animation:impactSpark .6s ease-out forwards}
+@keyframes impactSpark{0%{opacity:1;transform:rotate(var(--a)) translateX(0)}40%{opacity:.8}100%{opacity:0;transform:rotate(var(--a)) translateX(clamp(40px,8vw,100px))}}
 
 /* Keyword gold highlight */
 .glow-word{display:inline;transition:color .7s ease,text-shadow .9s ease}
