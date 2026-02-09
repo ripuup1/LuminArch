@@ -109,10 +109,12 @@
           // Nav
           if (nav) nav.classList.toggle('scrolled', y > 50);
 
-          // Hero logo collapse
+          // Hero logo — smooth parallax shrink (not binary snap)
           if (heroLogo) {
-            if (y > 150) heroLogo.classList.add('collapsed');
-            else heroLogo.classList.remove('collapsed');
+            var r = Math.min(1, Math.max(0, y / 300));
+            heroLogo.style.opacity = 1 - r;
+            heroLogo.style.transform = 'translateY(' + (-r * 50) + 'px) scale(' + (1 - r * 0.2) + ')';
+            heroLogo.style.pointerEvents = r > 0.8 ? 'none' : '';
           }
 
           // Scroll progress
@@ -172,7 +174,41 @@
         }
       });
     }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.process-connector').forEach(function (el) { specialObs.observe(el); });
+    document.querySelectorAll('.process-connector,.svg-divider').forEach(function (el) { specialObs.observe(el); });
+
+    /* ---------- HORIZONTAL SCROLL SHOWCASE ---------- */
+    (function initHScroll() {
+      var wrap = document.getElementById('hscrollWrap');
+      var track = document.getElementById('hscrollTrack');
+      if (!wrap || !track) return;
+      if (window.matchMedia('(max-width:768px)').matches) return; // mobile: stacked
+
+      var slides = track.children.length;
+      wrap.style.height = (slides * 100) + 'vh';
+
+      var barFill = document.getElementById('hscrollBarFill');
+      var counterEl = document.getElementById('hscrollCurrent');
+
+      function onScroll() {
+        var rect = wrap.getBoundingClientRect();
+        var scrollInWrap = -rect.top;
+        var maxScroll = wrap.offsetHeight - window.innerHeight;
+        if (maxScroll <= 0) return;
+        var progress = Math.max(0, Math.min(1, scrollInWrap / maxScroll));
+        var maxTx = track.scrollWidth - window.innerWidth;
+        track.style.transform = 'translateX(' + (-progress * maxTx) + 'px)';
+        if (barFill) barFill.style.width = (progress * 100) + '%';
+        if (counterEl) {
+          var idx = Math.min(slides, Math.floor(progress * slides) + 1);
+          counterEl.textContent = idx < 10 ? '0' + idx : idx;
+        }
+      }
+
+      window.addEventListener('scroll', function () {
+        requestAnimationFrame(onScroll);
+      }, { passive: true });
+      onScroll();
+    })();
 
     /* ---------- ROCKET ARC FLIGHT + FIREWORKS (Canvas-based) ---------- */
     (function initRocketArc() {
