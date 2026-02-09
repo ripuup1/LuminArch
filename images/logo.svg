@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" fill="none">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5D060"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B8942D"/>
+    </linearGradient>
+    <linearGradient id="gold-text" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8C84A"/>
+      <stop offset="100%" stop-color="#C4A032"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer rectangular frame -->
+  <rect x="60" y="20" width="280" height="340" rx="2" stroke="url(#gold)" stroke-width="2.5" fill="none"/>
+
+  <!-- Second rectangular frame (inset) -->
+  <rect x="80" y="40" width="240" height="300" rx="2" stroke="url(#gold)" stroke-width="1.8" fill="none"/>
+
+  <!-- Outer pointed arch -->
+  <path d="M100 340 L100 160 Q100 80 200 20 Q300 80 300 160 L300 340"
+        stroke="url(#gold)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+  <!-- Middle pointed arch -->
+  <path d="M125 340 L125 175 Q125 105 200 50 Q275 105 275 175 L275 340"
+        stroke="url(#gold)" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+
+  <!-- Inner pointed arch -->
+  <path d="M150 340 L150 190 Q150 130 200 80 Q250 130 250 190 L250 340"
+        stroke="url(#gold)" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+
+  <!-- Innermost arch (smallest) -->
+  <path d="M170 340 L170 210 Q170 155 200 115 Q230 155 230 210 L230 340"
+        stroke="url(#gold)" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+
+  <!-- Horizontal accent lines -->
+  <line x1="100" y1="200" x2="150" y2="200" stroke="url(#gold)" stroke-width="1.2"/>
+  <line x1="250" y1="200" x2="300" y2="200" stroke="url(#gold)" stroke-width="1.2"/>
+  <line x1="100" y1="260" x2="150" y2="260" stroke="url(#gold)" stroke-width="1"/>
+  <line x1="250" y1="260" x2="300" y2="260" stroke="url(#gold)" stroke-width="1"/>
+
+  <!-- "L" letter -->
+  <path d="M155 170 L155 290 L195 290" stroke="url(#gold)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- "A" letter -->
+  <path d="M210 290 L235 170 L260 290 M216 265 L254 265" stroke="url(#gold)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- LUMINARCH text -->
+  <text x="200" y="420" text-anchor="middle" fill="url(#gold-text)"
+        font-family="'General Sans', -apple-system, Helvetica, Arial, sans-serif"
+        font-size="36" font-weight="400" letter-spacing="12">LUMINARCH</text>
+
+  <!-- Subtle tagline -->
+  <text x="200" y="455" text-anchor="middle" fill="#8A8A8A"
+        font-family="'General Sans', -apple-system, Helvetica, Arial, sans-serif"
+        font-size="10" font-weight="500" letter-spacing="6">DIGITAL AGENCY</text>
+</svg>

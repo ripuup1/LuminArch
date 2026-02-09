@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
 <!-- Schema.org LocalBusiness -->
 <script type="application/ld+json">
@@ -45,8 +46,12 @@
 </script>
 </head>
 <body>
-<!-- Page transition overlay -->
-<div class="page-transition"></div>
+<!-- Branded loader -->
+<div class="page-loader" id="pageLoader">
+  <img src="images/logo.svg" alt="LuminArch" class="page-loader__logo" width="120" height="156">
+  <div class="page-loader__line"></div>
+  <span class="page-loader__text">Loading</span>
+</div>
 
 <!-- Global layers -->
 <div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -58,7 +63,7 @@
 <nav class="nav" id="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__logo">
-      <img src="images/logo.png" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
+      <img src="images/logo-mark.svg" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
       <span class="nav__logo-text">LuminArch</span>
     </a>
     <div class="nav__links">
@@ -83,7 +88,7 @@
 <section class="hero">
   <div class="hero__bg"><div class="hero__grid-lines"><span></span><span></span><span></span><span></span><span></span></div></div>
   <div class="hero__logo-wrap" id="heroLogo">
-    <img src="images/logo.png" alt="LuminArch Logo" class="hero__logo-img" width="220" height="220">
+    <img src="images/logo.svg" alt="LuminArch Logo" class="hero__logo-img" width="280" height="364">
   </div>
   <div class="container hero__content">
     <div class="hero__label label reveal">Digital Agency &bull; North Carolina</div>
@@ -216,7 +221,7 @@
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">
-          <img src="images/logo.png" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
+          <img src="images/logo-mark.svg" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
         </div>
         <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
       </div>

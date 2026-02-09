@@ -3,24 +3,26 @@
 (function () {
   'use strict';
 
-  /* ---------- PAGE TRANSITION (smooth black overlay) ---------- */
-  var transition = document.querySelector('.page-transition');
+  /* ---------- BRANDED LOADER ---------- */
+  var loader = document.getElementById('pageLoader');
+  var LOADER_MIN = 1200; // minimum splash display (ms)
+  var loadStart = Date.now();
 
-  function dismissTransition() {
-    if (!transition) return;
-    // Small delay so the black screen holds while paint settles
+  function dismissLoader() {
+    var elapsed = Date.now() - loadStart;
+    var remaining = Math.max(0, LOADER_MIN - elapsed);
     setTimeout(function () {
-      transition.classList.add('done');
-      // Once the overlay fades, trigger the hero sequence
-      setTimeout(triggerHeroAnimation, 600);
-    }, 150);
+      if (loader) loader.classList.add('done');
+      // After fade completes, trigger hero sequence
+      setTimeout(triggerHeroAnimation, 700);
+    }, remaining);
   }
 
-  // Wait for ALL assets (images, fonts, etc.) before revealing
+  // Wait for ALL assets (images, fonts, SVGs) before revealing
   if (document.readyState === 'complete') {
-    dismissTransition();
+    dismissLoader();
   } else {
-    window.addEventListener('load', dismissTransition);
+    window.addEventListener('load', dismissLoader);
   }
 
   /* ---------- HERO ENTRANCE SEQUENCE ---------- */
