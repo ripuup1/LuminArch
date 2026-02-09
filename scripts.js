@@ -3,37 +3,42 @@
 (function () {
   'use strict';
 
-  /* ---------- PAGE LOADER ---------- */
-  var loaderEl = document.getElementById('pageLoader');
-  var LOADER_MIN = 800; // ms – minimum display time
-  var loadStart = Date.now();
+  /* ---------- PAGE TRANSITION (smooth black overlay) ---------- */
+  var transition = document.querySelector('.page-transition');
 
-  function dismissLoader() {
-    var elapsed = Date.now() - loadStart;
-    var remaining = Math.max(0, LOADER_MIN - elapsed);
+  function dismissTransition() {
+    if (!transition) return;
+    // Small delay so the black screen holds while paint settles
     setTimeout(function () {
-      if (loaderEl) loaderEl.classList.add('done');
-      // Start hero animation after loader fades
-      setTimeout(triggerHeroAnimation, 500);
-    }, remaining);
+      transition.classList.add('done');
+      // Once the overlay fades, trigger the hero sequence
+      setTimeout(triggerHeroAnimation, 600);
+    }, 150);
   }
 
-  // Wait for ALL assets (images, fonts, etc.)
+  // Wait for ALL assets (images, fonts, etc.) before revealing
   if (document.readyState === 'complete') {
-    dismissLoader();
+    dismissTransition();
   } else {
-    window.addEventListener('load', dismissLoader);
+    window.addEventListener('load', dismissTransition);
   }
 
-  /* ---------- HERO STAGGER ANIMATION ---------- */
+  /* ---------- HERO ENTRANCE SEQUENCE ---------- */
   function triggerHeroAnimation() {
+    // Logo entrance — dramatic scale + glow
+    var logoImg = document.querySelector('.hero__logo-img');
+    if (logoImg) {
+      logoImg.classList.add('logo-visible');
+    }
+
+    // Stagger text lines after logo
     var heroLines = document.querySelectorAll('.hero .reveal-line');
     var heroReveals = document.querySelectorAll('.hero .reveal');
     heroLines.forEach(function (l, i) {
-      setTimeout(function () { l.classList.add('visible'); }, i * 150);
+      setTimeout(function () { l.classList.add('visible'); }, 400 + i * 150);
     });
     heroReveals.forEach(function (l, i) {
-      setTimeout(function () { l.classList.add('visible'); }, 300 + i * 200);
+      setTimeout(function () { l.classList.add('visible'); }, 800 + i * 200);
     });
   }
 
@@ -108,9 +113,9 @@
           var rect = el.getBoundingClientRect();
           var cx = rect.left + rect.width / 2;
           var cy = rect.top + rect.height / 2;
-          var dx = (e.clientX - cx) * 0.25;
-          var dy = (e.clientY - cy) * 0.25;
-          el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+          var ddx = (e.clientX - cx) * 0.25;
+          var ddy = (e.clientY - cy) * 0.25;
+          el.style.transform = 'translate(' + ddx + 'px,' + ddy + 'px)';
         });
         el.addEventListener('mouseleave', function () {
           el.style.transform = '';
@@ -125,8 +130,8 @@
           var rect = card.getBoundingClientRect();
           var x = (e.clientX - rect.left) / rect.width;
           var y = (e.clientY - rect.top) / rect.height;
-          var rotateY = (x - 0.5) * 8;  // max 4deg each side
-          var rotateX = (0.5 - y) * 6;  // max 3deg each side
+          var rotateY = (x - 0.5) * 8;
+          var rotateX = (0.5 - y) * 6;
           card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
         });
         card.addEventListener('mouseleave', function () {
@@ -192,7 +197,7 @@
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var particles = [];
-      var PARTICLE_COUNT = 40;
+      var PARTICLE_COUNT = 55;
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -203,29 +208,30 @@
 
       for (var i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.5 + 0.5,
-          dx: (Math.random() - 0.5) * 0.3,
-          dy: (Math.random() - 0.5) * 0.2 - 0.1,
-          opacity: Math.random() * 0.3 + 0.05
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 2 + 0.8,
+          dx: (Math.random() - 0.5) * 0.4,
+          dy: (Math.random() - 0.5) * 0.25 - 0.05,
+          opacity: Math.random() * 0.35 + 0.1
         });
       }
 
       function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(function (p) {
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
           p.x += p.dx;
           p.y += p.dy;
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
+          if (p.x < -10) p.x = canvas.width + 10;
+          if (p.x > canvas.width + 10) p.x = -10;
+          if (p.y < -10) p.y = canvas.height + 10;
+          if (p.y > canvas.height + 10) p.y = -10;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.r, 0, 6.283);
           ctx.fillStyle = 'rgba(212,175,55,' + p.opacity + ')';
           ctx.fill();
-        });
+        }
         requestAnimationFrame(drawParticles);
       }
       drawParticles();
