@@ -358,21 +358,21 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* A — ROCKET ARC (About page — arched trajectory across story-grid) */
 .story-grid{position:relative;overflow:visible}
 
-/* Arc container — overlays the full grid on desktop */
-.rocket-arc{position:absolute;inset:0;pointer-events:none;z-index:3}
+/* Arc container — overlays the full grid on desktop, overflow visible for crash below grid */
+.rocket-arc{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:visible}
 
 /* The SVG that holds the arc path */
-.rocket-arc__svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.rocket-arc__svg{position:absolute;inset:0;width:100%;height:120%;overflow:visible}
 
-/* Gold arc trail — drawn via stroke-dashoffset, then persists */
-.rocket-arc__path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 6px var(--accent-glow));transition:opacity .4s ease}
-.rocket-arc__path.drawing{opacity:1}
-.rocket-arc__path.persist{opacity:.12;stroke-width:1;filter:none;transition:opacity 1.2s ease}
+/* Gold arc trail — drawn via stroke-dashoffset, fades behind the rocket */
+.rocket-arc__path{fill:none;stroke:var(--accent);stroke-width:1.2;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 4px var(--accent-glow));transition:opacity .4s ease}
+.rocket-arc__path.drawing{opacity:.55}
+.rocket-arc__path.fading{opacity:0;transition:opacity 2s ease}
 
 /* Rocket ship — positioned by JS along the arc */
-.rocket-arc__ship{position:absolute;width:40px;height:40px;opacity:0;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 14px var(--accent-glow));transition:opacity .3s ease}
+.rocket-arc__ship{position:absolute;width:64px;height:64px;opacity:0;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 18px var(--accent-glow)) drop-shadow(0 0 40px rgba(212,175,55,0.2));transition:opacity .3s ease}
 .rocket-arc__ship.flying{opacity:1}
-.rocket-arc__ship.crashed{opacity:0;transition:opacity .15s ease}
+.rocket-arc__ship.crashed{opacity:0;transition:opacity .2s ease}
 .rocket-arc__ship svg{width:100%;height:100%}
 .ra-stroke{stroke:var(--accent);stroke-width:1.8;fill:none}
 .ra-fill{fill:var(--accent-dim)}
@@ -385,22 +385,25 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   100%{opacity:0;transform:scale(2);filter:blur(10px)}
 }
 
-/* Impact flash at crash point */
-.rocket-arc__impact{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.5) 0%,rgba(212,175,55,0.15) 40%,transparent 70%);opacity:0;pointer-events:none;width:0;height:0;transform:translate(-50%,-50%)}
-.rocket-arc__impact.flash{animation:arcImpact 1s ease-out forwards}
+/* Impact flash at crash point — large, bright burst */
+.rocket-arc__impact{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(245,208,96,0.8) 0%,rgba(212,175,55,0.35) 30%,rgba(212,175,55,0.1) 55%,transparent 75%);opacity:0;pointer-events:none;width:0;height:0;transform:translate(-50%,-50%)}
+.rocket-arc__impact.flash{animation:arcImpact 1.4s ease-out forwards}
 @keyframes arcImpact{
   0%{width:0;height:0;opacity:0}
-  25%{width:280px;height:180px;opacity:1}
-  100%{width:400px;height:260px;opacity:0}
+  15%{width:360px;height:240px;opacity:1}
+  40%{width:500px;height:340px;opacity:.7}
+  100%{width:620px;height:420px;opacity:0}
 }
 
-/* Text illumination after crash */
+/* Text illumination after crash — bright, warm glow */
 .story-text.illuminated{
-  color:var(--white) !important;
-  text-shadow:0 0 30px var(--accent-glow),0 0 60px rgba(212,175,55,0.12);
-  transition:color 1s ease,text-shadow 1s ease;
+  color:#FFFFFF !important;
+  text-shadow:0 0 18px rgba(245,208,96,0.6),0 0 50px var(--accent-glow),0 0 90px rgba(212,175,55,0.15);
+  transition:color .8s ease,text-shadow 1.2s ease;
 }
-.story-text.illuminated strong{text-shadow:0 0 20px var(--accent-glow)}
+.story-text.illuminated strong{color:#F5D060 !important;text-shadow:0 0 24px rgba(245,208,96,0.7),0 0 60px var(--accent-glow)}
+.story-text.illuminated em{text-shadow:0 0 20px rgba(245,208,96,0.5)}
+.story-grid__left .label.illuminated{color:#F5D060 !important;text-shadow:0 0 24px rgba(245,208,96,0.7),0 0 60px var(--accent-glow);transition:color .8s ease,text-shadow 1.2s ease}
 
 /* Mobile: stack the arc below the label, above the text */
 .rocket-arc--mobile{display:none;position:relative;height:120px;pointer-events:none;margin:16px 0}

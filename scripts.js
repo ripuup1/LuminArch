@@ -191,7 +191,7 @@
         // Arc control points (relative to container)
         var p0 = { x: w * 0.04, y: h * 0.85 };      // start: left column bottom
         var p1 = { x: w * 0.42, y: h * -0.15 };      // peak: above mid-left (fills dead space)
-        var p2 = { x: w * 0.78, y: h * 0.90 };       // end: under the text column
+        var p2 = { x: w * 0.78, y: h * 1.08 };       // end: below the text column (avoids readability overlap)
 
         // Set the SVG viewBox to match container
         var svg = arc.querySelector('.rocket-arc__svg');
@@ -243,8 +243,8 @@
           var angle = quadBezierAngle(eased, pts.p0, pts.p1, pts.p2);
 
           // Move ship — rotate SVG 90deg (nose up) + arc tangent angle
-          ship.style.left = (pos.x - 20) + 'px';
-          ship.style.top = (pos.y - 20) + 'px';
+          ship.style.left = (pos.x - 32) + 'px';
+          ship.style.top = (pos.y - 32) + 'px';
           ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
 
           // Draw trail behind rocket
@@ -269,19 +269,22 @@
             impact.style.top = pos.y + 'px';
             impact.classList.add('flash');
 
-            // Persist the arc trail as decorative element
+            // Fade trail out after crash
             setTimeout(function () {
               pathEl.classList.remove('drawing');
-              pathEl.classList.add('persist');
-            }, 300);
+              pathEl.classList.add('fading');
+            }, 200);
 
-            // Illuminate text
+            // Illuminate ALL story text — brighter, faster cascade
             setTimeout(function () {
               var texts = document.querySelectorAll('.story-text');
               texts.forEach(function (txt, i) {
-                setTimeout(function () { txt.classList.add('illuminated'); }, i * 200);
+                setTimeout(function () { txt.classList.add('illuminated'); }, i * 120);
               });
-            }, 500);
+              // Also illuminate the "Our Story" label
+              var label = document.querySelector('.story-grid__left .label');
+              if (label) label.classList.add('illuminated');
+            }, 350);
           }
         }
 
