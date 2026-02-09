@@ -151,7 +151,32 @@
         }
       });
     }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.rocket-inline__svg,.process-connector').forEach(function (el) { specialObs.observe(el); });
+    document.querySelectorAll('.process-connector').forEach(function (el) { specialObs.observe(el); });
+
+    /* ---------- ROCKET FLIGHT + CRASH + ILLUMINATE ---------- */
+    var rocketScene = document.getElementById('rocketScene');
+    if (rocketScene) {
+      var rocketObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            // Launch the rocket
+            rocketScene.classList.add('launched');
+            rocketScene.classList.add('crashed');
+
+            // After flight + crash (2.2s flight + 0.4s crash), illuminate text
+            setTimeout(function () {
+              var texts = document.querySelectorAll('.story-text');
+              texts.forEach(function (t, i) {
+                setTimeout(function () { t.classList.add('illuminated'); }, i * 200);
+              });
+            }, 2500);
+
+            rocketObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -30px 0px' });
+      rocketObs.observe(rocketScene);
+    }
 
     /* ---------- LAZY IMAGE FADE-IN ---------- */
     document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {

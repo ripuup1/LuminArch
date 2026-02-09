@@ -71,34 +71,33 @@
 <section class="section" style="padding-top:0">
   <div class="container">
     <div class="story-grid">
-      <div class="story-grid__left reveal">
-        <span class="label accent-text">Our Story</span>
-        <!-- Rocket in empty left column space -->
-        <div class="rocket-inline">
-          <svg class="rocket-inline__svg" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <!-- Rocket body -->
-            <path class="rocket-stroke" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C44 30, 60 10, 60 10Z"/>
-            <path class="rocket-fill" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C44 30, 60 10, 60 10Z"/>
-            <!-- Window -->
-            <circle class="rocket-stroke" cx="60" cy="55" r="7" style="stroke-dasharray:44;stroke-dashoffset:44"/>
-            <circle class="rocket-fill" cx="60" cy="55" r="5"/>
-            <!-- Fins -->
-            <path class="rocket-stroke" d="M44 85 L32 108 L44 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
-            <path class="rocket-stroke" d="M76 85 L88 108 L76 105Z" style="stroke-dasharray:80;stroke-dashoffset:80"/>
-            <path class="rocket-fill" d="M44 85 L32 108 L44 105Z"/>
-            <path class="rocket-fill" d="M76 85 L88 108 L76 105Z"/>
-            <!-- Exhaust flames -->
-            <line class="exhaust" x1="54" y1="114" x2="48" y2="150"/>
-            <line class="exhaust" x1="60" y1="114" x2="60" y2="158"/>
-            <line class="exhaust" x1="66" y1="114" x2="72" y2="150"/>
-          </svg>
-          <p class="rocket-inline__caption">Launching businesses<br>to new heights</p>
-        </div>
+      <div class="story-grid__left reveal"><span class="label accent-text">Our Story</span></div>
+      <div class="story-grid__right" id="storyText">
+        <p class="body-lg reveal story-text" style="color:var(--gray-muted)">We bridge the gap between small businesses and large businesses. We help small businesses access affordable, high-quality websites so they can proudly show their vision to any customer.</p>
+        <p class="body-lg reveal story-text" style="color:var(--gray-muted);margin-top:24px">This creates a more competitive market that ultimately helps everyone. We bring an otherwise expensive service down to accessible levels.</p>
+        <p class="body-lg reveal story-text" style="color:var(--gray-muted);margin-top:24px">Based in <strong style="color:var(--white)">North Carolina</strong>, our name says it all &mdash; <em>Lumin</em> for light, <em>Arch</em> for structure. We illuminate and we build. Every site is hand-coded, no templates, no page builders &mdash; just clean, fast, responsive websites built to represent your business the way it deserves.</p>
       </div>
-      <div class="story-grid__right">
-        <p class="body-lg reveal" style="color:var(--gray-muted)">We bridge the gap between small businesses and large businesses. We help small businesses access affordable, high-quality websites so they can proudly show their vision to any customer.</p>
-        <p class="body-lg reveal" style="color:var(--gray-muted);margin-top:24px">This creates a more competitive market that ultimately helps everyone. We bring an otherwise expensive service down to accessible levels.</p>
-        <p class="body-lg reveal" style="color:var(--gray-muted);margin-top:24px">Based in <strong style="color:var(--white)">North Carolina</strong>, our name says it all &mdash; <em>Lumin</em> for light, <em>Arch</em> for structure. We illuminate and we build. Every site is hand-coded, no templates, no page builders &mdash; just clean, fast, responsive websites built to represent your business the way it deserves.</p>
+      <!-- Rocket flight — flies right across grid, crashes under text, illuminates it -->
+      <div class="rocket-scene" id="rocketScene" aria-hidden="true">
+        <div class="rocket-scene__ship">
+          <svg class="rocket-scene__svg" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+            <path class="rs-stroke" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C24 30, 60 10, 60 10Z"/>
+            <path class="rs-fill" d="M60 10 C60 10, 76 30, 76 70 L76 100 C76 106, 72 110, 68 112 L52 112 C48 110, 44 106, 44 100 L44 70 C24 30, 60 10, 60 10Z"/>
+            <circle class="rs-stroke" cx="60" cy="55" r="6"/>
+            <circle class="rs-fill" cx="60" cy="55" r="4"/>
+            <path class="rs-stroke" d="M44 88 L32 108 L44 104Z"/>
+            <path class="rs-stroke" d="M76 88 L88 108 L76 104Z"/>
+            <path class="rs-fill" d="M44 88 L32 108 L44 104Z"/>
+            <path class="rs-fill" d="M76 88 L88 108 L76 104Z"/>
+          </svg>
+          <!-- Smoke puffs trail behind -->
+          <span class="rocket-scene__smoke s1"></span>
+          <span class="rocket-scene__smoke s2"></span>
+          <span class="rocket-scene__smoke s3"></span>
+          <span class="rocket-scene__smoke s4"></span>
+          <span class="rocket-scene__smoke s5"></span>
+        </div>
+        <div class="rocket-scene__impact"></div>
       </div>
     </div>
   </div>

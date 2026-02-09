@@ -355,21 +355,68 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 
 /* ===== VISUAL FILLERS ===== */
 
-/* A — ROCKET LAUNCH (About page — inside story-grid left column) */
-.rocket-inline{display:flex;flex-direction:column;align-items:center;margin-top:clamp(32px,5vh,56px);position:relative}
-.rocket-inline__svg{width:clamp(80px,10vw,110px);height:auto;transform:rotate(-35deg);opacity:0;filter:drop-shadow(0 0 20px var(--accent-glow));transition:opacity .8s ease}
-.rocket-inline__svg.visible{opacity:1;animation:rocketDraw 1.8s var(--ease-out-expo) forwards,rocketLaunch 1.6s ease-in 2.6s forwards}
-.rocket-inline__svg .rocket-stroke{stroke:var(--accent);stroke-width:1.5;fill:none;stroke-dasharray:400;stroke-dashoffset:400;transition:stroke-dashoffset 1.8s var(--ease-out-expo)}
-.rocket-inline__svg.visible .rocket-stroke{stroke-dashoffset:0}
-.rocket-inline__svg .rocket-fill{fill:var(--accent-dim);opacity:0;transition:opacity .6s ease .8s}
-.rocket-inline__svg.visible .rocket-fill{opacity:1}
-.rocket-inline__svg .exhaust{stroke:var(--accent);stroke-width:1.2;fill:none;opacity:0;stroke-dasharray:6 4;transition:opacity .5s ease 1.6s}
-.rocket-inline__svg.visible .exhaust{opacity:.6;animation:exhaustFlow 1s linear infinite}
-@keyframes exhaustFlow{to{stroke-dashoffset:-20}}
-@keyframes rocketDraw{from{opacity:0}to{opacity:1}}
-@keyframes rocketLaunch{0%{transform:rotate(-35deg) translate(0,0);opacity:1;filter:drop-shadow(0 0 20px var(--accent-glow))}60%{opacity:1;filter:drop-shadow(0 0 40px var(--accent-glow)) drop-shadow(0 0 80px rgba(212,175,55,.3))}100%{transform:rotate(-35deg) translate(80px,-160px);opacity:0;filter:drop-shadow(0 0 60px var(--accent-glow))}}
-.rocket-inline__caption{margin-top:20px;font-family:var(--font-display);font-size:clamp(.8125rem,1.5vw,1.0625rem);font-style:italic;color:var(--gray-light);opacity:0;text-align:center;line-height:1.4;transition:opacity .6s ease 1s}
-.rocket-inline__svg.visible ~ .rocket-inline__caption{opacity:1}
+/* A — ROCKET SCENE (About page — flies across story-grid) */
+.story-grid{position:relative;overflow:visible}
+.rocket-scene{position:absolute;bottom:-10px;left:0;width:100%;height:60px;pointer-events:none;z-index:3}
+.rocket-scene__ship{position:absolute;left:-60px;bottom:0;width:48px;height:48px;opacity:0}
+.rocket-scene__svg{width:100%;height:100%;transform:rotate(90deg);filter:drop-shadow(0 0 12px var(--accent-glow))}
+.rs-stroke{stroke:var(--accent);stroke-width:1.8;fill:none}
+.rs-fill{fill:var(--accent-dim)}
+
+/* Smoke puffs — positioned behind the rocket (left side when facing right) */
+.rocket-scene__smoke{position:absolute;left:-8px;top:50%;border-radius:50%;background:rgba(212,175,55,0.35);filter:blur(6px);opacity:0;pointer-events:none}
+.rocket-scene__smoke.s1{width:10px;height:10px;margin-top:-5px}
+.rocket-scene__smoke.s2{width:14px;height:14px;margin-top:-7px;left:-18px}
+.rocket-scene__smoke.s3{width:18px;height:18px;margin-top:-9px;left:-32px}
+.rocket-scene__smoke.s4{width:22px;height:22px;margin-top:-11px;left:-50px}
+.rocket-scene__smoke.s5{width:16px;height:16px;margin-top:-8px;left:-68px}
+
+/* Launched state — ship flies right */
+.rocket-scene.launched .rocket-scene__ship{opacity:1;animation:rocketFly 2.2s cubic-bezier(.2,.6,.3,1) forwards}
+.rocket-scene.launched .rocket-scene__smoke{animation:smokePuff 2.2s cubic-bezier(.2,.6,.3,1) forwards}
+.rocket-scene.launched .rocket-scene__smoke.s1{animation-delay:0s}
+.rocket-scene.launched .rocket-scene__smoke.s2{animation-delay:.05s}
+.rocket-scene.launched .rocket-scene__smoke.s3{animation-delay:.1s}
+.rocket-scene.launched .rocket-scene__smoke.s4{animation-delay:.15s}
+.rocket-scene.launched .rocket-scene__smoke.s5{animation-delay:.2s}
+
+@keyframes rocketFly{
+  0%{left:-60px;opacity:0}
+  8%{opacity:1}
+  85%{opacity:1}
+  100%{left:72%;opacity:1}
+}
+@keyframes smokePuff{
+  0%{opacity:0;transform:scale(.5)}
+  8%{opacity:.5}
+  40%{opacity:.3;transform:scale(1.2)}
+  80%{opacity:.15;transform:scale(1.8)}
+  100%{opacity:0;transform:scale(2.2)}
+}
+
+/* Impact flash — expands from crash point */
+.rocket-scene__impact{position:absolute;right:18%;bottom:-10px;width:0;height:0;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.4) 0%,rgba(212,175,55,0.15) 40%,transparent 70%);opacity:0;pointer-events:none;transform:translate(50%,50%)}
+.rocket-scene.crashed .rocket-scene__ship{animation:rocketFly 2.2s cubic-bezier(.2,.6,.3,1) forwards,rocketCrash .3s ease-out 2.2s forwards}
+.rocket-scene.crashed .rocket-scene__impact{animation:impactFlash 1.2s ease-out 2.3s forwards}
+
+@keyframes rocketCrash{
+  0%{opacity:1;transform:rotate(90deg) scale(1)}
+  50%{opacity:.8;transform:rotate(90deg) scale(1.15);filter:drop-shadow(0 0 30px var(--accent-glow)) drop-shadow(0 0 60px rgba(212,175,55,.5))}
+  100%{opacity:0;transform:rotate(90deg) scale(.3);filter:drop-shadow(0 0 50px var(--accent-glow))}
+}
+@keyframes impactFlash{
+  0%{width:0;height:0;opacity:0}
+  30%{width:320px;height:200px;opacity:1}
+  100%{width:500px;height:300px;opacity:0}
+}
+
+/* Text illumination after crash */
+.story-text.illuminated{
+  color:var(--white) !important;
+  text-shadow:0 0 30px var(--accent-glow),0 0 60px rgba(212,175,55,0.12);
+  transition:color 1s ease,text-shadow 1s ease;
+}
+.story-text.illuminated strong{text-shadow:0 0 20px var(--accent-glow)}
 
 /* C — FLOATING CODE SYMBOLS (Home page) */
 .code-float{position:relative;height:clamp(100px,15vh,160px);overflow:hidden;pointer-events:none}
@@ -440,8 +487,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .work-grid{grid-template-columns:1fr}
   .project-full__header{flex-direction:column}
   .project-full__details{grid-template-columns:repeat(2,1fr)}
-  .rocket-inline{margin-top:24px}
-  .rocket-inline__svg{width:70px}
+  .rocket-scene__ship{width:36px;height:36px}
+  .rocket-scene{bottom:-8px}
   .code-float{height:80px}
   .process-connector__line{width:90%}
 }
