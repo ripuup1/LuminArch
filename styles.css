@@ -186,6 +186,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* CTA */
 .cta-section{text-align:center}
 .cta-section__inner{display:flex;flex-direction:column;align-items:center}
+.cta-section__inner .reveal{display:flex;flex-direction:column;align-items:center}
 
 /* FOOTER */
 .footer{padding:clamp(60px,8vh,100px) 0 clamp(30px,4vh,50px);border-top:1px solid var(--gray-mid)}

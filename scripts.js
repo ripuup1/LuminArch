@@ -199,7 +199,7 @@
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var particles = [];
-      var PARTICLE_COUNT = 55;
+      var PARTICLE_COUNT = 65;
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -212,10 +212,11 @@
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 2 + 0.8,
-          dx: (Math.random() - 0.5) * 0.4,
-          dy: (Math.random() - 0.5) * 0.25 - 0.05,
-          opacity: Math.random() * 0.35 + 0.1
+          r: Math.random() * 2.5 + 1,
+          dx: (Math.random() - 0.5) * 0.35,
+          dy: (Math.random() - 0.5) * 0.2 - 0.05,
+          opacity: Math.random() * 0.4 + 0.15,
+          hue: Math.random() < 0.3 ? '245,215,80' : '212,175,55'
         });
       }
 
@@ -231,7 +232,7 @@
           if (p.y > canvas.height + 10) p.y = -10;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, 6.283);
-          ctx.fillStyle = 'rgba(212,175,55,' + p.opacity + ')';
+          ctx.fillStyle = 'rgba(' + p.hue + ',' + p.opacity + ')';
           ctx.fill();
         }
         requestAnimationFrame(drawParticles);
