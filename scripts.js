@@ -701,3 +701,38 @@ function toggleAddon(id) {
   var el = document.getElementById(id);
   if (el) el.classList.toggle('open');
 }
+
+/* In-page tab toggle (services page) */
+(function () {
+  var tabs = document.querySelectorAll('.page-tabs__btn[data-scroll-target]');
+  if (!tabs.length) return;
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabs.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var target = document.getElementById(btn.getAttribute('data-scroll-target'));
+      if (target) {
+        var offset = 80; // nav height buffer
+        var y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+
+  /* Update active tab on scroll */
+  var pricingEl = document.getElementById('pricing');
+  var servicesEl = document.getElementById('services-top');
+  if (pricingEl && servicesEl) {
+    window.addEventListener('scroll', function () {
+      var scrollY = window.pageYOffset + 200;
+      var pricingTop = pricingEl.getBoundingClientRect().top + window.pageYOffset;
+      if (scrollY >= pricingTop) {
+        tabs[0].classList.remove('active');
+        tabs[1].classList.add('active');
+      } else {
+        tabs[1].classList.remove('active');
+        tabs[0].classList.add('active');
+      }
+    }, { passive: true });
+  }
+})();

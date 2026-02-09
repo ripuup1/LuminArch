@@ -475,6 +475,13 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .process-connector.visible .process-connector__dot:nth-child(3) .process-connector__check{opacity:1;transition-delay:.95s}
 .process-connector.visible .process-connector__dot:nth-child(4) .process-connector__check{opacity:1;transition-delay:1.25s}
 
+/* IN-PAGE TAB TOGGLE */
+.page-tabs{display:flex;gap:0;border:1px solid var(--gray-mid);border-radius:2px;overflow:hidden;width:fit-content;margin-top:24px}
+.page-tabs__btn{padding:10px 28px;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-light);background:transparent;transition:all .3s ease;cursor:pointer;border:none;border-right:1px solid var(--gray-mid)}
+.page-tabs__btn:last-child{border-right:none}
+.page-tabs__btn.active{background:var(--accent);color:var(--black)}
+.page-tabs__btn:hover:not(.active){background:rgba(255,255,255,.03);color:var(--white)}
+
 /* ===== GLASSMORPHISM + GRADIENT ACCENTS ===== */
 .value-card{background:rgba(26,26,26,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .pricing-card{background:rgba(26,26,26,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -501,10 +508,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .hscroll-sticky{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}
 .hscroll-track{display:flex;height:100%;will-change:transform}
 
-/* Compact slide: info stacked left, preview right, top-aligned */
-.hscroll-slide{min-width:100vw;height:100%;flex-shrink:0;display:grid;grid-template-columns:1fr .55fr;gap:clamp(24px,3vw,48px);align-items:start;align-content:start;padding:calc(var(--nav-height) + clamp(40px,6vh,80px)) var(--pad) 80px;position:relative}
-.hscroll-slide__content{display:flex;flex-direction:column;gap:6px;position:relative;z-index:2}
-.hscroll-slide__visual{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:16/10;max-width:380px;border:1px solid var(--gray-mid);transition:border-color .4s ease;justify-self:end;margin-top:4px}
+/* Slide: compact info blob left (capped width), large preview right */
+.hscroll-slide{min-width:100vw;height:100%;flex-shrink:0;display:grid;grid-template-columns:minmax(0,460px) 1fr;gap:clamp(32px,4vw,60px);align-items:start;align-content:start;padding:calc(var(--nav-height) + clamp(40px,6vh,80px)) var(--pad) 80px;position:relative}
+.hscroll-slide__content{display:flex;flex-direction:column;gap:6px;position:relative;z-index:2;max-width:460px}
+.hscroll-slide__visual{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:16/10;border:1px solid var(--gray-mid);transition:border-color .4s ease;margin-top:4px}
 .hscroll-slide:hover .hscroll-slide__visual{border-color:rgba(212,175,55,0.2)}
 .hscroll-slide__visual img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .8s var(--ease-out-expo)}
 .hscroll-slide:hover .hscroll-slide__visual img{transform:scale(1.03)}
