@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Hub — LuminArch</title>
+<meta name="description" content="Log in to your LuminArch Client Hub to submit website update requests, track ticket status, and manage your account.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://lumin-arch.vercel.app/client-hub.html">
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+
+<!-- Top bar — logo + back link -->
+<div class="hub-topbar">
+  <a href="index.html" class="hub-topbar__logo">
+    <img src="images/logo-mark.svg" alt="LuminArch" width="28" height="28">
+    <span>LuminArch</span>
+  </a>
+  <a href="index.html" class="hub-topbar__back">Back to site <span>&rarr;</span></a>
+</div>
+
+<!-- Centered login card -->
+<div class="hub-page">
+  <div class="hub-card" id="hubCard">
+    <!-- Sign In view (default) -->
+    <div class="hub-view" id="viewSignIn">
+      <span class="label accent-text" style="text-align:center;display:block">Client Hub</span>
+      <h1 class="h2" style="text-align:center;margin-top:8px">Welcome <em class="italic">back</em></h1>
+      <p class="body-sm" style="color:var(--gray-light);text-align:center;margin-top:8px">Sign in to manage your website requests.</p>
+
+      <form id="formSignIn" class="hub-form" style="margin-top:32px">
+        <div class="form-group">
+          <label class="label" for="si-email">Email</label>
+          <input type="email" id="si-email" placeholder="you@business.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="label" for="si-password">Password</label>
+          <input type="password" id="si-password" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn--filled magnetic" style="width:100%;justify-content:center">Sign In <span class="btn-arrow">&rarr;</span></button>
+      </form>
+
+      <div class="hub-divider"><span>or</span></div>
+
+      <form id="formMagicLink" class="hub-form">
+        <div class="form-group">
+          <label class="label" for="ml-email">Email</label>
+          <input type="email" id="ml-email" placeholder="you@business.com" required autocomplete="email">
+        </div>
+        <button type="submit" class="btn magnetic" style="width:100%;justify-content:center">Send Magic Link <span class="btn-arrow">&rarr;</span></button>
+      </form>
+
+      <p class="hub-footer-text">
+        First time? <a href="#" id="showSignUp">Create your account</a>
+      </p>
+    </div>
+
+    <!-- Sign Up view -->
+    <div class="hub-view" id="viewSignUp" style="display:none">
+      <span class="label accent-text" style="text-align:center;display:block">Client Hub</span>
+      <h1 class="h2" style="text-align:center;margin-top:8px">Create <em class="italic">account</em></h1>
+      <p class="body-sm" style="color:var(--gray-light);text-align:center;margin-top:8px">Set up your Client Hub access.</p>
+
+      <form id="formSignUp" class="hub-form" style="margin-top:32px">
+        <div class="form-group">
+          <label class="label" for="su-name">Full Name</label>
+          <input type="text" id="su-name" placeholder="Your full name" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="label" for="su-email">Email</label>
+          <input type="email" id="su-email" placeholder="you@business.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="label" for="su-password">Password</label>
+          <input type="password" id="su-password" placeholder="Choose a password (min 6 chars)" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn--filled magnetic" style="width:100%;justify-content:center">Create Account <span class="btn-arrow">&rarr;</span></button>
+      </form>
+
+      <p class="hub-footer-text">
+        Already have an account? <a href="#" id="showSignIn">Sign in</a>
+      </p>
+    </div>
+
+    <!-- Magic link sent confirmation -->
+    <div class="hub-view" id="viewMagicSent" style="display:none">
+      <div style="text-align:center;padding:20px 0">
+        <div class="hub-check-icon">&#10003;</div>
+        <h2 class="h2" style="margin-top:16px">Check your <em class="italic">email</em></h2>
+        <p class="body-sm" style="color:var(--gray-light);margin-top:12px">We sent a magic link to <strong id="magicEmailDisplay" style="color:var(--white)"></strong>. Click the link to sign in.</p>
+        <a href="#" id="backToSignIn" class="btn magnetic" style="margin-top:32px">Back to Sign In <span class="btn-arrow">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="hub-toast-container" id="toastContainer"></div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="hub-auth.js"></script>
+<!-- Particles + cursor from shared scripts (subset) -->
+<script>
+(function(){
+  // Gold particles
+  var canvas=document.getElementById('particles');
+  if(canvas){
+    var ctx=canvas.getContext('2d'),ps=[],N=50;
+    function r(){canvas.width=innerWidth;canvas.height=innerHeight}r();
+    addEventListener('resize',r);
+    for(var i=0;i<N;i++)ps.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+.8,dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.15-.04,o:Math.random()*.35+.1,h:Math.random()<.3?'245,215,80':'212,175,55'});
+    (function d(){ctx.clearRect(0,0,canvas.width,canvas.height);for(var i=0;i<ps.length;i++){var p=ps[i];p.x+=p.dx;p.y+=p.dy;if(p.x<-10)p.x=canvas.width+10;if(p.x>canvas.width+10)p.x=-10;if(p.y<-10)p.y=canvas.height+10;if(p.y>canvas.height+10)p.y=-10;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fillStyle='rgba('+p.h+','+p.o+')';ctx.fill()}requestAnimationFrame(d)})();
+  }
+})();
+</script>
+</body>
+</html>

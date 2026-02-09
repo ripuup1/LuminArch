@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — LuminArch Client Hub</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="scroll-progress"></div>
+<div class="page-fade"></div>
+
+<!-- Global layers -->
+<div class="bg-lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor-dot"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <img src="images/logo-mark.svg" alt="LuminArch — Website Design Agency" class="nav__logo-icon" width="32" height="32">
+      <span class="nav__logo-text">LuminArch</span>
+    </a>
+    <div class="nav__links">
+      <a href="index.html" class="nav__link">Home</a>
+      <a href="work.html" class="nav__link">Work</a>
+      <a href="services.html" class="nav__link">Services &amp; Pricing</a>
+      <a href="about.html" class="nav__link">About</a>
+      <a href="client-hub.html" class="nav__link active">Client Hub</a>
+      <a href="contact.html" class="nav__cta">Get a Quote</a>
+    </div>
+    <div class="nav__toggle" id="navToggle"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="nav__mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="work.html">Work</a>
+  <a href="services.html">Services &amp; Pricing</a>
+  <a href="about.html">About</a>
+  <a href="client-hub.html">Client Hub</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<!-- Dashboard content (hidden until auth check) -->
+<div id="dashContent" style="opacity:0;transition:opacity .4s ease">
+
+<section class="page-header section" style="padding-bottom:0">
+  <div class="container">
+    <div class="dash-header">
+      <div>
+        <span class="label accent-text">Client Hub</span>
+        <h1 class="h2" style="margin-top:8px">Welcome back, <em class="italic" id="userName">—</em></h1>
+      </div>
+      <button class="btn magnetic" id="btnSignOut">Sign Out <span class="btn-arrow">&rarr;</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- Stats row -->
+<section class="section--tight" style="padding-top:clamp(24px,3vh,40px)">
+  <div class="container">
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <span class="dash-stat__num" id="statActive">0</span>
+        <span class="dash-stat__label">Active</span>
+      </div>
+      <div class="dash-stat">
+        <span class="dash-stat__num" id="statDeployed">0</span>
+        <span class="dash-stat__label">Deployed</span>
+      </div>
+      <div class="dash-stat">
+        <span class="dash-stat__num" id="statSince">—</span>
+        <span class="dash-stat__label">Member Since</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- New request button + inline form -->
+<section class="section--tight" style="padding-top:0">
+  <div class="container">
+    <button class="btn btn--filled magnetic" id="btnNewRequest" style="margin-bottom:24px">
+      + New Request <span class="btn-arrow">&rarr;</span>
+    </button>
+
+    <!-- Slide-down form -->
+    <div class="dash-form" id="newRequestForm" style="display:none">
+      <form id="formNewTicket">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label" for="tk-type">Request Type</label>
+            <select id="tk-type" required>
+              <option value="" disabled selected>Select type</option>
+              <option value="content_update">Content Update</option>
+              <option value="design_change">Design Change</option>
+              <option value="bug_report">Bug Report</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="label" for="tk-priority">Priority</label>
+            <div class="dash-priority-toggle">
+              <label class="dash-priority-opt">
+                <input type="radio" name="priority" value="normal" checked> Normal
+              </label>
+              <label class="dash-priority-opt">
+                <input type="radio" name="priority" value="urgent"> Urgent
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label" for="tk-subject">Subject</label>
+          <input type="text" id="tk-subject" placeholder="Brief description of what you need" required>
+        </div>
+        <div class="form-group">
+          <label class="label" for="tk-url">Website URL</label>
+          <input type="text" id="tk-url" placeholder="https://yourbusiness.com">
+        </div>
+        <div class="form-group">
+          <label class="label" for="tk-desc">Description</label>
+          <textarea id="tk-desc" rows="5" placeholder="Describe the update or issue in detail. The more info, the faster we can help." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="label">Attachments <span style="color:var(--gray-light);font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(max 10MB each)</span></label>
+          <div class="dash-dropzone" id="dropzone">
+            <input type="file" id="tk-files" multiple accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
+            <p class="dash-dropzone__text">Drag &amp; drop files here or <span class="accent-text" style="cursor:pointer" id="browseFiles">browse</span></p>
+            <div class="dash-dropzone__list" id="fileList"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <button type="submit" class="btn btn--filled magnetic">Submit Request <span class="btn-arrow">&rarr;</span></button>
+          <button type="button" class="btn magnetic" id="btnCancelRequest">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Ticket feed -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="dash-feed" id="ticketFeed">
+      <!-- Tickets loaded by JS -->
+      <div class="dash-feed__loading" id="feedLoading">
+        <div class="page-loader__line" style="width:60px;position:relative;overflow:hidden;opacity:1">
+          <div style="position:absolute;inset:0;background:var(--accent);animation:splashLineSlide 1.2s var(--ease-out-expo) infinite"></div>
+        </div>
+        <p class="body-sm" style="color:var(--gray-light);margin-top:12px">Loading tickets&hellip;</p>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="dash-empty" id="feedEmpty" style="display:none">
+      <div class="dash-empty__icon">&#9993;</div>
+      <h3 class="h3" style="margin-top:16px">No requests yet</h3>
+      <p class="body-sm" style="color:var(--gray-light);margin-top:8px;max-width:360px">Submit your first request and we&rsquo;ll get working on it. Updates are typically deployed within 3 business days.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- end #dashContent -->
+
+<footer class="footer" style="opacity:0" id="dashFooter">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <div class="footer__brand-name">
+          <img src="images/logo-mark.svg" alt="LuminArch" style="height:28px;width:auto;filter:drop-shadow(0 0 8px var(--accent-glow))" width="28" height="28"> LuminArch
+        </div>
+        <p class="footer__tagline">Digital agency building modern web experiences. Premium quality, accessible pricing. Based in North Carolina.</p>
+      </div>
+      <div class="footer__columns">
+        <div class="footer__col">
+          <div class="footer__col-title">Pages</div>
+          <a href="index.html">Home</a>
+          <a href="work.html">Work</a>
+          <a href="services.html">Services &amp; Pricing</a>
+          <a href="about.html">About</a>
+          <a href="client-hub.html">Client Hub</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Connect</div>
+          <a href="mailto:luminarch2026@gmail.com">luminarch2026@gmail.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copyright">&copy; 2026 LuminArch. All rights reserved. &bull; North Carolina</span>
+      <div class="footer__bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="back-to-top" aria-label="Back to top">&uarr;</button>
+
+<!-- Toast container -->
+<div class="hub-toast-container" id="toastContainer"></div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="hub-auth.js"></script>
+<script src="scripts.js"></script>
+</body>
+</html>
