@@ -355,59 +355,43 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 
 /* ===== VISUAL FILLERS ===== */
 
-/* A — ROCKET SCENE (About page — flies across story-grid) */
+/* A — ROCKET ARC (About page — arched trajectory across story-grid) */
 .story-grid{position:relative;overflow:visible}
-.rocket-scene{position:absolute;bottom:-10px;left:0;width:100%;height:60px;pointer-events:none;z-index:3}
-.rocket-scene__ship{position:absolute;left:-60px;bottom:0;width:48px;height:48px;opacity:0}
-.rocket-scene__svg{width:100%;height:100%;transform:rotate(90deg);filter:drop-shadow(0 0 12px var(--accent-glow))}
-.rs-stroke{stroke:var(--accent);stroke-width:1.8;fill:none}
-.rs-fill{fill:var(--accent-dim)}
 
-/* Smoke puffs — positioned behind the rocket (left side when facing right) */
-.rocket-scene__smoke{position:absolute;left:-8px;top:50%;border-radius:50%;background:rgba(212,175,55,0.35);filter:blur(6px);opacity:0;pointer-events:none}
-.rocket-scene__smoke.s1{width:10px;height:10px;margin-top:-5px}
-.rocket-scene__smoke.s2{width:14px;height:14px;margin-top:-7px;left:-18px}
-.rocket-scene__smoke.s3{width:18px;height:18px;margin-top:-9px;left:-32px}
-.rocket-scene__smoke.s4{width:22px;height:22px;margin-top:-11px;left:-50px}
-.rocket-scene__smoke.s5{width:16px;height:16px;margin-top:-8px;left:-68px}
+/* Arc container — overlays the full grid on desktop */
+.rocket-arc{position:absolute;inset:0;pointer-events:none;z-index:3}
 
-/* Launched state — ship flies right */
-.rocket-scene.launched .rocket-scene__ship{opacity:1;animation:rocketFly 2.2s cubic-bezier(.2,.6,.3,1) forwards}
-.rocket-scene.launched .rocket-scene__smoke{animation:smokePuff 2.2s cubic-bezier(.2,.6,.3,1) forwards}
-.rocket-scene.launched .rocket-scene__smoke.s1{animation-delay:0s}
-.rocket-scene.launched .rocket-scene__smoke.s2{animation-delay:.05s}
-.rocket-scene.launched .rocket-scene__smoke.s3{animation-delay:.1s}
-.rocket-scene.launched .rocket-scene__smoke.s4{animation-delay:.15s}
-.rocket-scene.launched .rocket-scene__smoke.s5{animation-delay:.2s}
+/* The SVG that holds the arc path */
+.rocket-arc__svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 
-@keyframes rocketFly{
-  0%{left:-60px;opacity:0}
-  8%{opacity:1}
-  85%{opacity:1}
-  100%{left:72%;opacity:1}
-}
-@keyframes smokePuff{
-  0%{opacity:0;transform:scale(.5)}
-  8%{opacity:.5}
-  40%{opacity:.3;transform:scale(1.2)}
-  80%{opacity:.15;transform:scale(1.8)}
-  100%{opacity:0;transform:scale(2.2)}
+/* Gold arc trail — drawn via stroke-dashoffset, then persists */
+.rocket-arc__path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 6px var(--accent-glow));transition:opacity .4s ease}
+.rocket-arc__path.drawing{opacity:1}
+.rocket-arc__path.persist{opacity:.12;stroke-width:1;filter:none;transition:opacity 1.2s ease}
+
+/* Rocket ship — positioned by JS along the arc */
+.rocket-arc__ship{position:absolute;width:40px;height:40px;opacity:0;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 14px var(--accent-glow));transition:opacity .3s ease}
+.rocket-arc__ship.flying{opacity:1}
+.rocket-arc__ship.crashed{opacity:0;transition:opacity .15s ease}
+.rocket-arc__ship svg{width:100%;height:100%}
+.ra-stroke{stroke:var(--accent);stroke-width:1.8;fill:none}
+.ra-fill{fill:var(--accent-dim)}
+
+/* Smoke puffs — spawned by JS at rocket position */
+.rocket-arc__puff{position:absolute;border-radius:50%;background:rgba(212,175,55,0.3);pointer-events:none;opacity:0;animation:arcPuff 1.2s ease-out forwards}
+@keyframes arcPuff{
+  0%{opacity:.5;transform:scale(.4);filter:blur(2px)}
+  40%{opacity:.25;transform:scale(1.2);filter:blur(5px)}
+  100%{opacity:0;transform:scale(2);filter:blur(10px)}
 }
 
-/* Impact flash — expands from crash point */
-.rocket-scene__impact{position:absolute;right:18%;bottom:-10px;width:0;height:0;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.4) 0%,rgba(212,175,55,0.15) 40%,transparent 70%);opacity:0;pointer-events:none;transform:translate(50%,50%)}
-.rocket-scene.crashed .rocket-scene__ship{animation:rocketFly 2.2s cubic-bezier(.2,.6,.3,1) forwards,rocketCrash .3s ease-out 2.2s forwards}
-.rocket-scene.crashed .rocket-scene__impact{animation:impactFlash 1.2s ease-out 2.3s forwards}
-
-@keyframes rocketCrash{
-  0%{opacity:1;transform:rotate(90deg) scale(1)}
-  50%{opacity:.8;transform:rotate(90deg) scale(1.15);filter:drop-shadow(0 0 30px var(--accent-glow)) drop-shadow(0 0 60px rgba(212,175,55,.5))}
-  100%{opacity:0;transform:rotate(90deg) scale(.3);filter:drop-shadow(0 0 50px var(--accent-glow))}
-}
-@keyframes impactFlash{
+/* Impact flash at crash point */
+.rocket-arc__impact{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.5) 0%,rgba(212,175,55,0.15) 40%,transparent 70%);opacity:0;pointer-events:none;width:0;height:0;transform:translate(-50%,-50%)}
+.rocket-arc__impact.flash{animation:arcImpact 1s ease-out forwards}
+@keyframes arcImpact{
   0%{width:0;height:0;opacity:0}
-  30%{width:320px;height:200px;opacity:1}
-  100%{width:500px;height:300px;opacity:0}
+  25%{width:280px;height:180px;opacity:1}
+  100%{width:400px;height:260px;opacity:0}
 }
 
 /* Text illumination after crash */
@@ -417,6 +401,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   transition:color 1s ease,text-shadow 1s ease;
 }
 .story-text.illuminated strong{text-shadow:0 0 20px var(--accent-glow)}
+
+/* Mobile: stack the arc below the label, above the text */
+.rocket-arc--mobile{display:none;position:relative;height:120px;pointer-events:none;margin:16px 0}
+.rocket-arc--mobile .rocket-arc__svg{position:relative;width:100%;height:100%}
 
 /* C — FLOATING CODE SYMBOLS (Home page) */
 .code-float{position:relative;height:clamp(100px,15vh,160px);overflow:hidden;pointer-events:none}
@@ -487,8 +475,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .work-grid{grid-template-columns:1fr}
   .project-full__header{flex-direction:column}
   .project-full__details{grid-template-columns:repeat(2,1fr)}
-  .rocket-scene__ship{width:36px;height:36px}
-  .rocket-scene{bottom:-8px}
+  .rocket-arc{display:none}
+  .rocket-arc--mobile{display:block}
   .code-float{height:80px}
   .process-connector__line{width:90%}
 }

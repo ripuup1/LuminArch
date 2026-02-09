@@ -153,30 +153,161 @@
     }, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.process-connector').forEach(function (el) { specialObs.observe(el); });
 
-    /* ---------- ROCKET FLIGHT + CRASH + ILLUMINATE ---------- */
-    var rocketScene = document.getElementById('rocketScene');
-    if (rocketScene) {
-      var rocketObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            // Launch the rocket
-            rocketScene.classList.add('launched');
-            rocketScene.classList.add('crashed');
+    /* ---------- ROCKET ARC FLIGHT ---------- */
+    (function initRocketArc() {
+      // Pick the visible container (desktop vs mobile)
+      var isMobile = window.matchMedia('(max-width:768px)').matches;
+      var arc = document.getElementById(isMobile ? 'rocketArcMobile' : 'rocketArc');
+      if (!arc) return;
 
-            // After flight + crash (2.2s flight + 0.4s crash), illuminate text
+      var pathEl = arc.querySelector('.rocket-arc__path');
+      var ship = arc.querySelector('.rocket-arc__ship');
+      var impact = arc.querySelector('.rocket-arc__impact');
+      var container = arc;
+
+      // Quadratic bezier helper: B(t) = (1-t)^2*P0 + 2*(1-t)*t*P1 + t^2*P2
+      function quadBezier(t, p0, p1, p2) {
+        var mt = 1 - t;
+        return {
+          x: mt * mt * p0.x + 2 * mt * t * p1.x + t * t * p2.x,
+          y: mt * mt * p0.y + 2 * mt * t * p1.y + t * t * p2.y
+        };
+      }
+
+      // Tangent angle at t for rotation
+      function quadBezierAngle(t, p0, p1, p2) {
+        var mt = 1 - t;
+        var dx = 2 * mt * (p1.x - p0.x) + 2 * t * (p2.x - p1.x);
+        var dy = 2 * mt * (p1.y - p0.y) + 2 * t * (p2.y - p1.y);
+        return Math.atan2(dy, dx);
+      }
+
+      function buildArcPath() {
+        var rect = container.getBoundingClientRect();
+        var w = container.offsetWidth || rect.width;
+        var h = container.offsetHeight || rect.height;
+        if (w === 0 || h === 0) return null;
+
+        // Arc control points (relative to container)
+        var p0 = { x: w * 0.04, y: h * 0.85 };      // start: left column bottom
+        var p1 = { x: w * 0.42, y: h * -0.15 };      // peak: above mid-left (fills dead space)
+        var p2 = { x: w * 0.78, y: h * 0.90 };       // end: under the text column
+
+        // Set the SVG viewBox to match container
+        var svg = arc.querySelector('.rocket-arc__svg');
+        svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+        // Build the path d attribute
+        var d = 'M ' + p0.x + ' ' + p0.y + ' Q ' + p1.x + ' ' + p1.y + ' ' + p2.x + ' ' + p2.y;
+        pathEl.setAttribute('d', d);
+
+        // Compute total path length for stroke-dashoffset animation
+        var len = pathEl.getTotalLength();
+        pathEl.style.strokeDasharray = len;
+        pathEl.style.strokeDashoffset = len;
+
+        return { p0: p0, p1: p1, p2: p2, len: len, w: w, h: h };
+      }
+
+      function spawnPuff(x, y, size) {
+        var puff = document.createElement('span');
+        puff.className = 'rocket-arc__puff';
+        var s = size || (8 + Math.random() * 12);
+        puff.style.width = s + 'px';
+        puff.style.height = s + 'px';
+        puff.style.left = (x - s / 2) + 'px';
+        puff.style.top = (y - s / 2) + 'px';
+        container.appendChild(puff);
+        setTimeout(function () { if (puff.parentNode) puff.parentNode.removeChild(puff); }, 1300);
+      }
+
+      function runAnimation(pts) {
+        var DURATION = 2500; // ms
+        var startTime = null;
+        var lastPuff = 0;
+        var PUFF_INTERVAL = 80; // ms between puffs
+
+        ship.classList.add('flying');
+        pathEl.classList.add('drawing');
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          var elapsed = timestamp - startTime;
+          var t = Math.min(elapsed / DURATION, 1);
+
+          // Ease-in-out cubic
+          var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+          // Position along arc
+          var pos = quadBezier(eased, pts.p0, pts.p1, pts.p2);
+          var angle = quadBezierAngle(eased, pts.p0, pts.p1, pts.p2);
+
+          // Move ship — rotate SVG 90deg (nose up) + arc tangent angle
+          ship.style.left = (pos.x - 20) + 'px';
+          ship.style.top = (pos.y - 20) + 'px';
+          ship.style.transform = 'rotate(' + (angle + Math.PI / 2) + 'rad)';
+
+          // Draw trail behind rocket
+          var trailOffset = pts.len * (1 - eased);
+          pathEl.style.strokeDashoffset = trailOffset;
+
+          // Spawn smoke puffs periodically
+          if (elapsed - lastPuff > PUFF_INTERVAL && t < 0.92) {
+            spawnPuff(pos.x, pos.y, 6 + Math.random() * 14);
+            lastPuff = elapsed;
+          }
+
+          if (t < 1) {
+            requestAnimationFrame(step);
+          } else {
+            // --- CRASH ---
+            ship.classList.remove('flying');
+            ship.classList.add('crashed');
+
+            // Position impact at crash point
+            impact.style.left = pos.x + 'px';
+            impact.style.top = pos.y + 'px';
+            impact.classList.add('flash');
+
+            // Persist the arc trail as decorative element
+            setTimeout(function () {
+              pathEl.classList.remove('drawing');
+              pathEl.classList.add('persist');
+            }, 300);
+
+            // Illuminate text
             setTimeout(function () {
               var texts = document.querySelectorAll('.story-text');
-              texts.forEach(function (t, i) {
-                setTimeout(function () { t.classList.add('illuminated'); }, i * 200);
+              texts.forEach(function (txt, i) {
+                setTimeout(function () { txt.classList.add('illuminated'); }, i * 200);
               });
-            }, 2500);
-
-            rocketObs.unobserve(e.target);
+            }, 500);
           }
-        });
-      }, { threshold: 0.2, rootMargin: '0px 0px -30px 0px' });
-      rocketObs.observe(rocketScene);
-    }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      // Trigger on scroll
+      var triggered = false;
+      var storyGrid = document.getElementById('storyGrid');
+      if (storyGrid) {
+        var arcObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !triggered) {
+              triggered = true;
+              // Small delay so the grid is fully rendered
+              setTimeout(function () {
+                var pts = buildArcPath();
+                if (pts) runAnimation(pts);
+              }, 200);
+              arcObs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.25, rootMargin: '0px 0px -40px 0px' });
+        arcObs.observe(storyGrid);
+      }
+    })();
 
     /* ---------- LAZY IMAGE FADE-IN ---------- */
     document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
