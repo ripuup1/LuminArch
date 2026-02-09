@@ -3,37 +3,53 @@
 (function () {
   'use strict';
 
-  /* ---------- BRANDED LOADER ---------- */
+  /* ---------- SESSION-AWARE LOADER ---------- */
   var loader = document.getElementById('pageLoader');
-  var LOADER_MIN = 1200; // minimum splash display (ms)
+  var pageFade = document.querySelector('.page-fade');
+  var isFirstVisit = !sessionStorage.getItem('la_visited');
+  var LOADER_MIN = 1200;
   var loadStart = Date.now();
 
-  function dismissLoader() {
-    var elapsed = Date.now() - loadStart;
-    var remaining = Math.max(0, LOADER_MIN - elapsed);
-    setTimeout(function () {
-      if (loader) loader.classList.add('done');
-      // After fade completes, trigger hero sequence
-      setTimeout(triggerHeroAnimation, 700);
-    }, remaining);
-  }
+  // Mark session as visited
+  sessionStorage.setItem('la_visited', '1');
 
-  // Wait for ALL assets (images, fonts, SVGs) before revealing
-  if (document.readyState === 'complete') {
-    dismissLoader();
+  if (isFirstVisit && loader) {
+    // First visit: show full branded loader
+    function dismissLoader() {
+      var elapsed = Date.now() - loadStart;
+      var remaining = Math.max(0, LOADER_MIN - elapsed);
+      setTimeout(function () {
+        loader.classList.add('done');
+        setTimeout(triggerHeroAnimation, 700);
+      }, remaining);
+    }
+    if (document.readyState === 'complete') dismissLoader();
+    else window.addEventListener('load', dismissLoader);
   } else {
-    window.addEventListener('load', dismissLoader);
+    // Return visit: skip branded loader, quick fade
+    if (loader) loader.classList.add('skip');
+    if (pageFade) {
+      // Quick fade dismissal
+      function dismissFade() {
+        setTimeout(function () {
+          pageFade.classList.add('done');
+          setTimeout(triggerHeroAnimation, 300);
+        }, 80);
+      }
+      if (document.readyState === 'complete') dismissFade();
+      else window.addEventListener('load', dismissFade);
+    } else {
+      // No fade element — just trigger hero
+      if (document.readyState === 'complete') triggerHeroAnimation();
+      else window.addEventListener('load', function () { setTimeout(triggerHeroAnimation, 100); });
+    }
   }
 
   /* ---------- HERO ENTRANCE SEQUENCE ---------- */
   function triggerHeroAnimation() {
-    // Logo entrance — dramatic scale + glow
     var logoImg = document.querySelector('.hero__logo-img');
-    if (logoImg) {
-      logoImg.classList.add('logo-visible');
-    }
+    if (logoImg) logoImg.classList.add('logo-visible');
 
-    // Stagger text lines after logo
     var heroLines = document.querySelectorAll('.hero .reveal-line');
     var heroReveals = document.querySelectorAll('.hero .reveal');
     heroLines.forEach(function (l, i) {
@@ -49,15 +65,53 @@
     var nav = document.getElementById('nav');
     var heroLogo = document.getElementById('heroLogo');
 
-    /* Nav scroll + hero logo collapse */
+    /* ---------- SCROLL PROGRESS BAR ---------- */
+    var progressBar = document.querySelector('.scroll-progress');
+    function updateProgress() {
+      if (!progressBar) return;
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = pct + '%';
+    }
+
+    /* ---------- BACK TO TOP BUTTON ---------- */
+    var backBtn = document.querySelector('.back-to-top');
+
+    /* Unified scroll handler (performant — single listener) */
+    var ticking = false;
     window.addEventListener('scroll', function () {
-      var y = window.scrollY;
-      if (nav) nav.classList.toggle('scrolled', y > 50);
-      if (heroLogo) {
-        if (y > 150) heroLogo.classList.add('collapsed');
-        else heroLogo.classList.remove('collapsed');
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var y = window.scrollY;
+
+          // Nav
+          if (nav) nav.classList.toggle('scrolled', y > 50);
+
+          // Hero logo collapse
+          if (heroLogo) {
+            if (y > 150) heroLogo.classList.add('collapsed');
+            else heroLogo.classList.remove('collapsed');
+          }
+
+          // Scroll progress
+          updateProgress();
+
+          // Back to top visibility
+          if (backBtn) backBtn.classList.toggle('visible', y > 600);
+
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
+
+    // Back to top click
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
 
     /* Mobile menu */
     var toggle = document.getElementById('navToggle');
@@ -85,8 +139,17 @@
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
     document.querySelectorAll('.reveal,.reveal-line').forEach(function (el) { obs.observe(el); });
+
+    /* ---------- LAZY IMAGE FADE-IN ---------- */
+    document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', function () { img.classList.add('loaded'); });
+      }
+    });
 
     /* ---------- CUSTOM CURSOR ---------- */
     var dot = document.querySelector('.cursor-dot');
@@ -94,8 +157,8 @@
       var mx = 0, my = 0, dx = 0, dy = 0;
       document.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; });
       (function animate() {
-        dx += (mx - dx) * 0.2;
-        dy += (my - dy) * 0.2;
+        dx += (mx - dx) * 0.15;
+        dy += (my - dy) * 0.15;
         dot.style.left = dx + 'px';
         dot.style.top = dy + 'px';
         requestAnimationFrame(animate);

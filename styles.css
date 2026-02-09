@@ -47,9 +47,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bg-lines{position:fixed;inset:0;z-index:1;pointer-events:none;display:flex;justify-content:space-between;padding:0 var(--pad)}
 .bg-lines span{width:1px;height:100%;background:rgba(255,255,255,.08)}
 
-/* PAGE LOADER — branded splash */
+/* PAGE LOADER — branded splash (first visit only) */
 .page-loader{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1;transition:opacity .8s cubic-bezier(.4,0,.2,1),visibility .8s}
 .page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.page-loader.skip{display:none}
 .page-loader__logo{width:120px;height:auto;opacity:0;transform:scale(.85);animation:splashLogoIn .8s var(--ease-out-expo) .15s forwards;filter:drop-shadow(0 0 30px var(--accent-glow))}
 .page-loader__line{width:60px;height:1px;background:var(--gray-mid);margin-top:28px;position:relative;overflow:hidden;opacity:0;animation:splashFadeIn .4s ease .4s forwards}
 .page-loader__line::after{content:'';position:absolute;inset:0;background:var(--accent);transform:translateX(-100%);animation:splashLineSlide 1s var(--ease-out-expo) .5s forwards}
@@ -57,6 +58,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes splashLogoIn{to{opacity:1;transform:scale(1)}}
 @keyframes splashFadeIn{to{opacity:1}}
 @keyframes splashLineSlide{to{transform:translateX(0)}}
+
+/* QUICK PAGE FADE (internal navigation) */
+.page-fade{position:fixed;inset:0;background:var(--black);z-index:9999;pointer-events:none;opacity:1;transition:opacity .35s ease}
+.page-fade.done{opacity:0}
+
+/* SCROLL PROGRESS BAR */
+.scroll-progress{position:fixed;top:0;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));z-index:10001;pointer-events:none;transition:none}
+
+/* BACK TO TOP */
+.back-to-top{position:fixed;bottom:32px;right:32px;width:44px;height:44px;border:1px solid var(--gray-mid);background:rgba(10,10,10,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;z-index:999;opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease,border-color .3s ease;pointer-events:none;border-radius:2px}
+.back-to-top.visible{opacity:1;transform:translateY(0);pointer-events:all}
+.back-to-top:hover{border-color:var(--accent);background:rgba(212,175,55,.08)}
+
+/* LAZY IMAGE FADE */
+img[loading="lazy"]{opacity:0;transition:opacity .6s ease}
+img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 
 /* LEGACY fallback */
 .page-transition{display:none}
@@ -97,10 +114,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .btn:hover .btn-arrow{transform:translateX(4px)}
 
 /* ANIMATIONS */
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease-out-expo),transform .8s var(--ease-out-expo)}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.25,.46,.45,.94),transform .9s var(--ease-out-expo)}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .reveal-line{overflow:hidden;display:block}
-.reveal-line__inner{display:block;transform:translateY(105%);transition:transform .8s var(--ease-out-expo)}
+.reveal-line__inner{display:block;transform:translateY(105%);transition:transform .9s var(--ease-out-expo)}
 .reveal-line.visible .reveal-line__inner{transform:translateY(0)}
 .stagger-children .reveal:nth-child(1){transition-delay:0s}
 .stagger-children .reveal:nth-child(2){transition-delay:.1s}
