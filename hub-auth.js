@@ -163,11 +163,24 @@
             // Email confirmation required
             toast('Check your email to confirm your account.', 'success');
             showView(viewSignIn);
+            // Notify LuminArch of new sign-up
+            notifyNewSignUp(name, email);
           } else {
             window.location.href = 'dashboard.html';
+            notifyNewSignUp(name, email);
           }
         });
       });
+    }
+
+    // Notify admin of new sign-up via Formspree
+    function notifyNewSignUp(name, email) {
+      var data = new FormData();
+      data.append('name', '[Client Hub] New Sign-Up');
+      data.append('email', email);
+      data.append('message', 'New Client Hub registration:\n\nName: ' + name + '\nEmail: ' + email + '\nTime: ' + new Date().toLocaleString() + '\n\nThis user needs approval before they can submit tickets. Log into Supabase to approve them.');
+      data.append('_subject', 'New Client Hub Sign-Up: ' + name);
+      fetch('https://formspree.io/f/xzdabyeo', { method: 'POST', body: data }).catch(function () {});
     }
 
     return; // Stop here for login page
@@ -180,6 +193,7 @@
   if (!isDashboard) return;
 
   var currentUser = null;
+  var isApproved = false;
   var pendingFiles = [];
 
   // Auth guard — redirect if not logged in
@@ -189,19 +203,70 @@
       return;
     }
     currentUser = res.data.session.user;
-    initDashboard();
+    checkApprovalThenInit();
   });
 
   // Listen for auth changes (e.g., magic link callback)
   sb.auth.onAuthStateChange(function (event, session) {
     if (event === 'SIGNED_IN' && session && !currentUser) {
       currentUser = session.user;
-      initDashboard();
+      checkApprovalThenInit();
     }
     if (event === 'SIGNED_OUT') {
       window.location.href = 'client-hub.html';
     }
   });
+
+  function checkApprovalThenInit() {
+    // Check user_profiles for approval status
+    sb.from('user_profiles')
+      .select('approved')
+      .eq('id', currentUser.id)
+      .maybeSingle()
+      .then(function (res) {
+        if (res.data && res.data.approved) {
+          isApproved = true;
+          initDashboard();
+        } else {
+          // Not approved — show pending state
+          showPendingApproval();
+        }
+      });
+  }
+
+  function showPendingApproval() {
+    var content = $('dashContent');
+    var footer = $('dashFooter');
+    if (content) content.classList.add('dash-ready');
+    if (footer) footer.classList.add('dash-ready');
+
+    var pageFade = document.querySelector('.page-fade');
+    if (pageFade && !pageFade.classList.contains('done')) {
+      pageFade.classList.add('done');
+    }
+
+    // Replace dashboard content with pending message
+    var pendingEl = $('dashPending');
+    var mainContent = $('dashMain');
+    if (pendingEl) pendingEl.style.display = 'block';
+    if (mainContent) mainContent.style.display = 'none';
+
+    // Set user name
+    var nameEl = $('pendingName');
+    var meta = currentUser.user_metadata || {};
+    var displayName = meta.full_name || meta.name || currentUser.email.split('@')[0];
+    if (nameEl) nameEl.textContent = displayName;
+
+    // Wire sign out on pending page
+    var btnPendingSignOut = $('btnPendingSignOut');
+    if (btnPendingSignOut) {
+      btnPendingSignOut.addEventListener('click', function () {
+        sb.auth.signOut().then(function () {
+          window.location.href = 'client-hub.html';
+        });
+      });
+    }
+  }
 
   function initDashboard() {
     // Show dashboard content + footer (hidden during auth check)

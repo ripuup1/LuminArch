@@ -51,6 +51,26 @@
 <!-- Dashboard content (hidden until auth check) -->
 <div id="dashContent" class="dash-loading">
 
+<!-- PENDING APPROVAL STATE (hidden by default) -->
+<div id="dashPending" style="display:none">
+  <section class="section" style="min-height:60vh;display:flex;align-items:center">
+    <div class="container" style="text-align:center;max-width:520px">
+      <div style="font-size:3rem;margin-bottom:16px;opacity:.4">&#9203;</div>
+      <span class="label accent-text">Account Pending</span>
+      <h1 class="h2" style="margin-top:12px">Welcome, <em class="italic" id="pendingName">—</em></h1>
+      <p class="body-lg" style="color:var(--gray-muted);margin-top:16px;line-height:1.7">Your account has been created successfully. Our team is reviewing your registration and will approve access shortly.</p>
+      <p class="body-sm" style="color:var(--gray-light);margin-top:20px">You&rsquo;ll receive an email at your registered address once your account is approved. In the meantime, feel free to <a href="contact.html" style="color:var(--accent);text-decoration:underline">contact us</a> if you have any questions.</p>
+      <div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="index.html" class="btn magnetic">Back to Home <span class="btn-arrow">&rarr;</span></a>
+        <button class="btn magnetic" id="btnPendingSignOut">Sign Out <span class="btn-arrow">&rarr;</span></button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- MAIN DASHBOARD (shown only when approved) -->
+<div id="dashMain">
+
 <section class="page-header section" style="padding-bottom:0">
   <div class="container">
     <div class="dash-header">
@@ -167,6 +187,7 @@
   </div>
 </section>
 
+</div><!-- end #dashMain -->
 </div><!-- end #dashContent -->
 
 <footer class="footer dash-loading" id="dashFooter">
