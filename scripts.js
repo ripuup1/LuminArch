@@ -1043,8 +1043,8 @@
           y: Math.random() * footer.offsetHeight,
           dx: (Math.random() - 0.5) * 0.2,
           dy: (Math.random() - 0.5) * 0.15,
-          r: Math.random() * 1.5 + 0.8,
-          opacity: Math.random() * 0.3 + 0.50
+          r: Math.random() * 1.8 + 1,
+          opacity: Math.random() * 0.3 + 0.68
         });
       }
 
@@ -1071,7 +1071,7 @@
             var ddy = stars[i].y - stars[j].y;
             var dist = Math.sqrt(ddx * ddx + ddy * ddy);
             if (dist < CONNECT_DIST) {
-              var alpha = (1 - dist / CONNECT_DIST) * 0.40;
+              var alpha = (1 - dist / CONNECT_DIST) * 0.55;
               ctx2.beginPath();
               ctx2.moveTo(stars[i].x, stars[i].y);
               ctx2.lineTo(stars[j].x, stars[j].y);
