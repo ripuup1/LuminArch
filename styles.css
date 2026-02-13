@@ -397,7 +397,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .tilt-card{transition:transform .4s var(--ease-out-expo);will-change:transform;transform-style:preserve-3d}
 
 /* PARTICLE CANVAS */
-#particles{position:fixed;inset:0;z-index:1;cursor:default}
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none}
 
 /* ===== VISUAL FILLERS ===== */
 

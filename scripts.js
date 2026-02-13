@@ -530,12 +530,14 @@
         orbs.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: interactive ? (Math.random() * 1.5 + 2.5) : (Math.random() * 2.5 + 1),
+          r: interactive ? (Math.random() * 2 + 3.5) : (Math.random() * 2.5 + 1),
           dx: (Math.random() - 0.5) * 0.35,
           dy: (Math.random() - 0.5) * 0.2 - 0.05,
-          opacity: Math.random() * 0.4 + 0.15,
+          opacity: interactive ? (Math.random() * 0.35 + 0.35) : (Math.random() * 0.4 + 0.15),
           baseOpacity: 0,
-          hue: Math.random() < 0.3 ? '245,215,80' : '212,175,55',
+          hue: interactive
+            ? (Math.random() < 0.4 ? '255,200,60' : '230,190,50')
+            : (Math.random() < 0.3 ? '245,215,80' : '212,175,55'),
           interactive: interactive,
           pulsePhase: Math.random() * Math.PI * 2,
           alive: true,
@@ -591,18 +593,22 @@
         orb.alive = true;
         orb.fadingIn = true;
         orb.fadeProgress = 0;
-        orb.r = Math.random() * 1.5 + 2.5;
+        orb.r = Math.random() * 2 + 3.5;
       }
 
-      /* Click handler — find clicked orb */
+      /* Click handler — listen on document so clicks work through content layers */
       if (!isMobile) {
-        canvas.addEventListener('click', function (e) {
+        var interactiveTags = { A:1, BUTTON:1, INPUT:1, TEXTAREA:1, SELECT:1, LABEL:1 };
+        document.addEventListener('click', function (e) {
+          /* Skip if user clicked an actual interactive element */
+          var tag = e.target.tagName;
+          if (interactiveTags[tag] || e.target.closest('a, button, input, textarea, select, .nav, .btn')) return;
           var mx = e.clientX;
           var my = e.clientY;
           for (var i = 0; i < orbs.length; i++) {
             var o = orbs[i];
             if (!o.interactive || !o.alive) continue;
-            var hitRadius = o.r + 12; /* generous hit area */
+            var hitRadius = o.r + 14; /* generous hit area */
             var ddx = o.x - mx;
             var ddy = o.y - my;
             if (ddx * ddx + ddy * ddy < hitRadius * hitRadius) {
@@ -615,22 +621,6 @@
               break; /* only one orb per click */
             }
           }
-        });
-
-        /* Cursor hint — change cursor when hovering interactive orb */
-        canvas.addEventListener('mousemove', function (e) {
-          var mx = e.clientX;
-          var my = e.clientY;
-          var hovering = false;
-          for (var i = 0; i < orbs.length; i++) {
-            var o = orbs[i];
-            if (!o.interactive || !o.alive) continue;
-            var hitR = o.r + 12;
-            var ddx = o.x - mx;
-            var ddy = o.y - my;
-            if (ddx * ddx + ddy * ddy < hitR * hitR) { hovering = true; break; }
-          }
-          canvas.style.cursor = hovering ? 'pointer' : 'default';
         });
       }
 
@@ -658,15 +648,21 @@
 
           var displayOpacity = o.opacity * o.fadeProgress;
 
-          /* Subtle pulse for interactive orbs */
+          /* Pulse for interactive orbs — bigger, more colorful */
           var radius = o.r;
           if (o.interactive && o.alive) {
-            o.pulsePhase += 0.03;
-            radius += Math.sin(o.pulsePhase) * 0.6;
-            /* Soft glow */
+            o.pulsePhase += 0.035;
+            var pulse = Math.sin(o.pulsePhase);
+            radius += pulse * 1.2;
+            /* Outer glow halo */
+            ctx.beginPath();
+            ctx.arc(o.x, o.y, radius + 8, 0, 6.283);
+            ctx.fillStyle = 'rgba(' + o.hue + ',' + (displayOpacity * 0.08) + ')';
+            ctx.fill();
+            /* Inner glow */
             ctx.beginPath();
             ctx.arc(o.x, o.y, radius + 4, 0, 6.283);
-            ctx.fillStyle = 'rgba(' + o.hue + ',' + (displayOpacity * 0.15) + ')';
+            ctx.fillStyle = 'rgba(' + o.hue + ',' + (displayOpacity * 0.2) + ')';
             ctx.fill();
           }
 
