@@ -128,7 +128,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .stagger-children .reveal:nth-child(4){transition-delay:.2s}
 
 /* CONTENT Z-INDEX (above particles + bg-lines) */
-.hero,.section,.section--tight,.marquee,.footer,.page-header,.cta-section,.stats-section{position:relative;z-index:2}
+.hero,.section,.section--tight,.marquee,.footer,.page-header,.cta-section,.stats-section,.hscroll-wrap{position:relative;z-index:2}
 
 /* HERO */
 .hero{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:var(--nav-height);overflow:hidden}

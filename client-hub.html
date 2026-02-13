@@ -114,18 +114,92 @@
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="hub-auth.js"></script>
-<!-- Particles + cursor from shared scripts (subset) -->
+<!-- Particles + fireworks from shared scripts -->
 <script>
 (function(){
-  // Gold particles
   var canvas=document.getElementById('particles');
-  if(canvas){
-    var ctx=canvas.getContext('2d'),ps=[],N=50;
-    function r(){canvas.width=innerWidth;canvas.height=innerHeight}r();
-    addEventListener('resize',r);
-    for(var i=0;i<N;i++)ps.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+.8,dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.15-.04,o:Math.random()*.35+.1,h:Math.random()<.3?'245,215,80':'212,175,55'});
-    (function d(){ctx.clearRect(0,0,canvas.width,canvas.height);for(var i=0;i<ps.length;i++){var p=ps[i];p.x+=p.dx;p.y+=p.dy;if(p.x<-10)p.x=canvas.width+10;if(p.x>canvas.width+10)p.x=-10;if(p.y<-10)p.y=canvas.height+10;if(p.y>canvas.height+10)p.y=-10;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fillStyle='rgba('+p.h+','+p.o+')';ctx.fill()}requestAnimationFrame(d)})();
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var orbs=[], sparkles=[], ORB_COUNT=50;
+  var isMobile=window.innerWidth<768||'ontouchstart' in window;
+
+  var warmColors=[[255,180,60],[255,120,50],[255,80,80],[255,160,200],[245,215,80],[212,175,55]];
+  var coolColors=[[80,160,255],[120,80,255],[60,220,200],[180,140,255],[100,200,255],[200,200,255]];
+  function pickColor(){var p=Math.random()<0.5?warmColors:coolColors;return p[Math.floor(Math.random()*p.length)];}
+
+  function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+  resize(); addEventListener('resize',resize);
+
+  for(var i=0;i<ORB_COUNT;i++){
+    var inter=!isMobile&&(i%2===0);
+    orbs.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+      r:inter?(Math.random()*2+3.5):(Math.random()*2+.8),
+      dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.15-.04,
+      opacity:inter?(Math.random()*.35+.35):(Math.random()*.35+.1),
+      hue:inter?(Math.random()<.4?'255,200,60':'230,190,50'):(Math.random()<.3?'245,215,80':'212,175,55'),
+      interactive:inter,pulsePhase:Math.random()*Math.PI*2,alive:true,fadingIn:true,fadeProgress:Math.random()});
   }
+
+  function spawnFirework(x,y){
+    var count=Math.floor(Math.random()*11)+20;var bc=pickColor();
+    for(var i=0;i<count;i++){var a=(Math.PI*2/count)*i+(Math.random()-.5)*.4;var sp=Math.random()*3+1.5;
+      var cr=Math.min(255,Math.max(0,bc[0]+(Math.random()-.5)*40));
+      var cg=Math.min(255,Math.max(0,bc[1]+(Math.random()-.5)*40));
+      var cb=Math.min(255,Math.max(0,bc[2]+(Math.random()-.5)*40));
+      sparkles.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.5,r:Math.random()*2+1,
+        color:[Math.round(cr),Math.round(cg),Math.round(cb)],life:1,decay:Math.random()*.015+.012,trail:[]});
+    }
+  }
+
+  function respawnOrb(o){
+    var att=0,nx,ny,close;
+    do{nx=Math.random()*canvas.width;ny=Math.random()*canvas.height;close=false;
+      for(var j=0;j<orbs.length;j++){if(orbs[j].interactive&&orbs[j].alive&&orbs[j]!==o){
+        var ddx=orbs[j].x-nx,ddy=orbs[j].y-ny;if(Math.sqrt(ddx*ddx+ddy*ddy)<120){close=true;break;}}}att++;
+    }while(close&&att<15);
+    o.x=nx;o.y=ny;o.alive=true;o.fadingIn=true;o.fadeProgress=0;o.r=Math.random()*2+3.5;
+  }
+
+  if(!isMobile){
+    var skipTags={A:1,BUTTON:1,INPUT:1,TEXTAREA:1,SELECT:1,LABEL:1};
+    document.addEventListener('click',function(e){
+      var tag=e.target.tagName;
+      if(skipTags[tag]||e.target.closest('a,button,input,textarea,select,.nav,.btn,.hub-card')) return;
+      var mx=e.clientX,my=e.clientY;
+      for(var i=0;i<orbs.length;i++){var o=orbs[i];
+        if(!o.interactive||!o.alive) continue;
+        var hr=o.r+14,ddx=o.x-mx,ddy=o.y-my;
+        if(ddx*ddx+ddy*ddy<hr*hr){spawnFirework(o.x,o.y);o.alive=false;
+          (function(ref){setTimeout(function(){respawnOrb(ref);},2000+Math.random()*2000);})(o);break;}
+      }
+    });
+  }
+
+  (function drawFrame(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(var i=0;i<orbs.length;i++){var o=orbs[i];
+      if(!o.alive&&!o.fadingIn) continue;
+      o.x+=o.dx;o.y+=o.dy;
+      if(o.x<-10)o.x=canvas.width+10;if(o.x>canvas.width+10)o.x=-10;
+      if(o.y<-10)o.y=canvas.height+10;if(o.y>canvas.height+10)o.y=-10;
+      if(o.fadingIn){o.fadeProgress+=.01;if(o.fadeProgress>=1){o.fadeProgress=1;o.fadingIn=false;}}
+      var dop=o.opacity*o.fadeProgress;var rad=o.r;
+      if(o.interactive&&o.alive){o.pulsePhase+=.035;var pulse=Math.sin(o.pulsePhase);rad+=pulse*1.2;
+        ctx.beginPath();ctx.arc(o.x,o.y,rad+8,0,6.283);ctx.fillStyle='rgba('+o.hue+','+(dop*.08)+')';ctx.fill();
+        ctx.beginPath();ctx.arc(o.x,o.y,rad+4,0,6.283);ctx.fillStyle='rgba('+o.hue+','+(dop*.2)+')';ctx.fill();}
+      ctx.beginPath();ctx.arc(o.x,o.y,rad,0,6.283);ctx.fillStyle='rgba('+o.hue+','+dop+')';ctx.fill();
+    }
+    for(var i=sparkles.length-1;i>=0;i--){var s=sparkles[i];
+      s.trail.push({x:s.x,y:s.y,life:s.life});if(s.trail.length>4)s.trail.shift();
+      s.vy+=.06;s.vx*=.985;s.vy*=.985;s.x+=s.vx;s.y+=s.vy;s.life-=s.decay;
+      if(s.life<=0){sparkles.splice(i,1);continue;}
+      for(var t=0;t<s.trail.length;t++){var tr=s.trail[t];var ta=(t/s.trail.length)*s.life*.3;
+        ctx.beginPath();ctx.arc(tr.x,tr.y,s.r*.6,0,6.283);ctx.fillStyle='rgba('+s.color[0]+','+s.color[1]+','+s.color[2]+','+ta+')';ctx.fill();}
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r*s.life,0,6.283);ctx.fillStyle='rgba('+s.color[0]+','+s.color[1]+','+s.color[2]+','+s.life+')';ctx.fill();
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r*s.life*.4,0,6.283);ctx.fillStyle='rgba(255,255,255,'+(s.life*.6)+')';ctx.fill();
+    }
+    requestAnimationFrame(drawFrame);
+  })();
 })();
 // Dismiss page fade and reveal content
 (function(){

@@ -337,6 +337,9 @@
             impact.style.top = pos.y + 'px';
             impact.classList.add('exploding');
 
+            // Enable firework orb clicks now that rocket is done
+            if (typeof fireworksReady !== 'undefined') fireworksReady = true;
+
             // Illuminate keywords — after CSS explosion visually peaks (~700ms)
             setTimeout(function () {
               var words = document.querySelectorAll('.glow-word');
@@ -503,6 +506,7 @@
       var sparkles = [];
       var ORB_COUNT = 65;
       var isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+      var fireworksReady = !document.getElementById('rocketArc') && !document.getElementById('rocketArcMobile'); /* gate: false on about page until rocket finishes */
 
       /* Color palettes for fireworks */
       var warmColors = [
@@ -600,6 +604,8 @@
       if (!isMobile) {
         var interactiveTags = { A:1, BUTTON:1, INPUT:1, TEXTAREA:1, SELECT:1, LABEL:1 };
         document.addEventListener('click', function (e) {
+          /* Skip if fireworks not yet enabled (about page: wait for rocket) */
+          if (!fireworksReady) return;
           /* Skip if user clicked an actual interactive element */
           var tag = e.target.tagName;
           if (interactiveTags[tag] || e.target.closest('a, button, input, textarea, select, .nav, .btn')) return;
