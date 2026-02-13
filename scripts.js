@@ -1071,7 +1071,7 @@
             var ddy = stars[i].y - stars[j].y;
             var dist = Math.sqrt(ddx * ddx + ddy * ddy);
             if (dist < CONNECT_DIST) {
-              var alpha = (1 - dist / CONNECT_DIST) * 0.55;
+              var alpha = (1 - dist / CONNECT_DIST) * 0.70;
               ctx2.beginPath();
               ctx2.moveTo(stars[i].x, stars[i].y);
               ctx2.lineTo(stars[j].x, stars[j].y);
