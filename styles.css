@@ -523,6 +523,19 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .svgd-c{stroke:var(--accent);stroke-width:1;fill:none;opacity:0;stroke-dasharray:200;stroke-dashoffset:200;transition:stroke-dashoffset 1.5s ease-out 1.2s,opacity .8s ease 1.2s}
 .svg-divider.visible .svgd-c{stroke-dashoffset:0;opacity:.4}
 
+/* Circuit pulse — glowing dot that travels along paths */
+.svgd-pulse{fill:#F5D060;opacity:0;filter:drop-shadow(0 0 4px rgba(245,215,80,.8));transition:none}
+
+/* Window glow — warm amber fill on architectural windows */
+.svgd-win{transition:stroke-dashoffset 1.5s ease-out 1.2s,opacity .8s ease 1.2s,fill .6s ease,filter .6s ease}
+.svgd-win.lit{fill:rgba(245,200,80,0.6);filter:drop-shadow(0 0 3px rgba(245,200,80,.5));stroke:rgba(245,215,80,0.9)}
+
+/* Stat slot machine */
+.stat__number{overflow:hidden;display:inline-block;position:relative}
+.stat__digit-wrap{display:inline-block;overflow:hidden;height:1em;position:relative;vertical-align:bottom}
+.stat__digit-reel{display:flex;flex-direction:column;transition:transform .6s cubic-bezier(.2,.8,.3,1);will-change:transform}
+.stat__digit-reel span{display:block;height:1em;line-height:1}
+
 /* ===== HORIZONTAL SCROLL SHOWCASE (Work page) ===== */
 .hscroll-wrap{position:relative}
 .hscroll-sticky{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}

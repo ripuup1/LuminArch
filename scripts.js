@@ -446,20 +446,53 @@
       });
     }
 
-    /* ---------- STATS COUNTER ---------- */
-    function animateCounter(el, target, dur) {
-      var start = performance.now();
-      function update(now) {
-        var p = Math.min((now - start) / dur, 1);
-        el.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * target) + (el.dataset.suffix || '');
-        if (p < 1) requestAnimationFrame(update);
+    /* ---------- STATS COUNTER — SLOT MACHINE ---------- */
+    function slotMachine(el) {
+      var target = parseInt(el.dataset.target);
+      var suffix = el.dataset.suffix || '';
+      var digits = String(target).split('');
+      el.textContent = '';
+
+      digits.forEach(function (digit, idx) {
+        var wrap = document.createElement('span');
+        wrap.className = 'stat__digit-wrap';
+        var reel = document.createElement('span');
+        reel.className = 'stat__digit-reel';
+
+        /* Build reel: 0-9 then the target digit on top */
+        var totalSlots = 10 + parseInt(digit);
+        for (var n = 0; n <= totalSlots; n++) {
+          var s = document.createElement('span');
+          s.textContent = n % 10;
+          reel.appendChild(s);
+        }
+
+        reel.style.transform = 'translateY(0)';
+        wrap.appendChild(reel);
+        el.appendChild(wrap);
+
+        /* Stagger each digit's roll */
+        (function (r, slots, delay) {
+          setTimeout(function () {
+            r.style.transition = 'transform ' + (0.6 + slots * 0.04) + 's cubic-bezier(.2,.8,.3,1)';
+            r.style.transform = 'translateY(-' + (slots) + 'em)';
+          }, delay);
+        })(reel, totalSlots, 100 + idx * 200);
+      });
+
+      /* Add suffix after last digit */
+      if (suffix) {
+        var suffixSpan = document.createElement('span');
+        suffixSpan.textContent = suffix;
+        suffixSpan.style.verticalAlign = 'bottom';
+        el.appendChild(suffixSpan);
       }
-      requestAnimationFrame(update);
     }
+
     var statsObs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
-          animateCounter(e.target, parseInt(e.target.dataset.target), 1800);
+          slotMachine(e.target);
           statsObs.unobserve(e.target);
         }
       });
@@ -726,8 +759,9 @@
       }
       drawFrame();
 
-      /* ---------- INTRO FIREWORKS — 3 auto-bursts on page load ---------- */
-      if (!isMobile && fireworksReady) {
+      /* ---------- INTRO FIREWORKS — 3 auto-bursts on homepage only ---------- */
+      var isHomePage = !!document.querySelector('.hero');
+      if (!isMobile && fireworksReady && isHomePage) {
         var introOrbs = orbs.filter(function (o) { return o.interactive && o.alive; });
         /* Pick 3 random interactive orbs spaced apart */
         for (var ib = 0; ib < Math.min(3, introOrbs.length); ib++) {
@@ -747,6 +781,235 @@
         }
       }
     }
+    /* ---------- CIRCUIT BOARD PULSE ---------- */
+    (function initCircuitPulse() {
+      var circuit = document.getElementById('circuitDivider');
+      if (!circuit) return;
+      var svg = circuit.querySelector('.svg-divider__svg');
+      var paths = circuit.querySelectorAll('.svgd');
+      var nodes = circuit.querySelectorAll('.svgd-n');
+
+      /* Wait for draw-in to finish (~3s after visible) then start pulsing */
+      var pulseStarted = false;
+      var pulseObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && !pulseStarted) {
+            pulseStarted = true;
+            setTimeout(startPulse, 3200); /* after draw-in animation */
+            pulseObs.unobserve(circuit);
+          }
+        });
+      }, { threshold: 0.3 });
+      pulseObs.observe(circuit);
+
+      function startPulse() {
+        /* Pulse along each path sequentially */
+        function pulseOnePath(pathIdx) {
+          if (pathIdx >= paths.length) {
+            /* Pause then restart */
+            setTimeout(function () { pulseOnePath(0); }, 2000);
+            return;
+          }
+          var path = paths[pathIdx];
+          var len = path.getTotalLength();
+          if (!len || len < 10) { pulseOnePath(pathIdx + 1); return; }
+
+          var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dot.setAttribute('r', '3');
+          dot.setAttribute('class', 'svgd-pulse');
+          svg.appendChild(dot);
+
+          var duration = Math.max(600, len * 1.5);
+          var startTime = null;
+          function animateDot(ts) {
+            if (!startTime) startTime = ts;
+            var t = Math.min((ts - startTime) / duration, 1);
+            var pt = path.getPointAtLength(t * len);
+            dot.setAttribute('cx', pt.x);
+            dot.setAttribute('cy', pt.y);
+            dot.style.opacity = t < 0.1 ? t * 10 : (t > 0.85 ? (1 - t) / 0.15 : 1);
+
+            /* Flash nearby nodes */
+            nodes.forEach(function (n) {
+              var nx = parseFloat(n.getAttribute('cx'));
+              var ny = parseFloat(n.getAttribute('cy'));
+              var dist = Math.sqrt((pt.x - nx) * (pt.x - nx) + (pt.y - ny) * (pt.y - ny));
+              if (dist < 20) {
+                n.style.fill = '#F5D060';
+                n.style.filter = 'drop-shadow(0 0 4px rgba(245,215,80,.8))';
+                n.style.opacity = '0.9';
+              }
+            });
+
+            if (t < 1) {
+              requestAnimationFrame(animateDot);
+            } else {
+              svg.removeChild(dot);
+              /* Reset node styles after a brief glow */
+              setTimeout(function () {
+                nodes.forEach(function (n) {
+                  n.style.fill = '';
+                  n.style.filter = '';
+                  n.style.opacity = '';
+                });
+              }, 300);
+              setTimeout(function () { pulseOnePath(pathIdx + 1); }, 150);
+            }
+          }
+          requestAnimationFrame(animateDot);
+        }
+        pulseOnePath(0);
+      }
+    })();
+
+    /* ---------- ARCHITECTURAL DIVIDER — WINDOW LIGHTS ---------- */
+    (function initWindowLights() {
+      var arch = document.getElementById('archDivider');
+      if (!arch) return;
+      var windows = arch.querySelectorAll('.svgd-win');
+      var spire = arch.querySelector('line[x1="690"][y1="22"]'); /* tower antenna */
+
+      var lightsStarted = false;
+      var lightObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && !lightsStarted) {
+            lightsStarted = true;
+            setTimeout(lightUpWindows, 3000); /* after draw-in */
+            lightObs.unobserve(arch);
+          }
+        });
+      }, { threshold: 0.3 });
+      lightObs.observe(arch);
+
+      function lightUpWindows() {
+        /* Shuffle window order for random lighting */
+        var indices = [];
+        for (var i = 0; i < windows.length; i++) indices.push(i);
+        for (var i = indices.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+        }
+
+        indices.forEach(function (idx, order) {
+          setTimeout(function () {
+            windows[idx].classList.add('lit');
+          }, order * 400 + Math.random() * 200);
+        });
+
+        /* Blink the tower spire light */
+        if (spire) {
+          setTimeout(function () {
+            var blinkOn = true;
+            setInterval(function () {
+              spire.style.stroke = blinkOn ? '#ff4040' : '';
+              spire.style.filter = blinkOn ? 'drop-shadow(0 0 3px rgba(255,60,60,.7))' : '';
+              spire.style.opacity = blinkOn ? '0.9' : '';
+              blinkOn = !blinkOn;
+            }, 1200);
+          }, indices.length * 400 + 500);
+        }
+
+        /* Subtle flicker on random windows */
+        setTimeout(function () {
+          setInterval(function () {
+            var pick = Math.floor(Math.random() * windows.length);
+            var w = windows[pick];
+            if (!w.classList.contains('lit')) return;
+            w.style.opacity = '0.25';
+            setTimeout(function () { w.style.opacity = ''; }, 150 + Math.random() * 200);
+          }, 3000 + Math.random() * 2000);
+        }, indices.length * 400 + 1000);
+      }
+    })();
+
+    /* ---------- FOOTER CONSTELLATION ---------- */
+    (function initConstellation() {
+      var footer = document.querySelector('.footer');
+      var cvs = document.getElementById('constellation');
+      if (!footer || !cvs) return;
+      var ctx2 = cvs.getContext('2d');
+      var stars = [];
+      var STAR_COUNT = 25;
+      var CONNECT_DIST = 140;
+      var animating = false;
+
+      function resizeCanvas() {
+        cvs.width = footer.offsetWidth;
+        cvs.height = footer.offsetHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      for (var i = 0; i < STAR_COUNT; i++) {
+        stars.push({
+          x: Math.random() * footer.offsetWidth,
+          y: Math.random() * footer.offsetHeight,
+          dx: (Math.random() - 0.5) * 0.2,
+          dy: (Math.random() - 0.5) * 0.15,
+          r: Math.random() * 1.5 + 0.8,
+          opacity: Math.random() * 0.3 + 0.15
+        });
+      }
+
+      function drawConstellation() {
+        if (!animating) return;
+        ctx2.clearRect(0, 0, cvs.width, cvs.height);
+        var w = cvs.width, h = cvs.height;
+
+        /* Move stars */
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+          s.x += s.dx;
+          s.y += s.dy;
+          if (s.x < 0) s.x = w;
+          if (s.x > w) s.x = 0;
+          if (s.y < 0) s.y = h;
+          if (s.y > h) s.y = 0;
+        }
+
+        /* Draw connecting lines */
+        for (var i = 0; i < stars.length; i++) {
+          for (var j = i + 1; j < stars.length; j++) {
+            var ddx = stars[i].x - stars[j].x;
+            var ddy = stars[i].y - stars[j].y;
+            var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (dist < CONNECT_DIST) {
+              var alpha = (1 - dist / CONNECT_DIST) * 0.12;
+              ctx2.beginPath();
+              ctx2.moveTo(stars[i].x, stars[i].y);
+              ctx2.lineTo(stars[j].x, stars[j].y);
+              ctx2.strokeStyle = 'rgba(212,175,55,' + alpha + ')';
+              ctx2.lineWidth = 0.6;
+              ctx2.stroke();
+            }
+          }
+        }
+
+        /* Draw stars */
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+          ctx2.beginPath();
+          ctx2.arc(s.x, s.y, s.r, 0, 6.283);
+          ctx2.fillStyle = 'rgba(212,175,55,' + s.opacity + ')';
+          ctx2.fill();
+        }
+
+        requestAnimationFrame(drawConstellation);
+      }
+
+      /* Only animate when footer is in view — saves GPU */
+      var footerObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            if (!animating) { animating = true; drawConstellation(); }
+          } else {
+            animating = false;
+          }
+        });
+      }, { threshold: 0.05 });
+      footerObs.observe(footer);
+    })();
+
   }); // end DOMContentLoaded
 })();
 
