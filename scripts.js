@@ -787,35 +787,37 @@
         }
       }
     }
-    /* ---------- CIRCUIT BOARD PULSE ---------- */
+    /* ---------- CIRCUIT BOARD PULSE (all instances) ---------- */
     (function initCircuitPulse() {
-      var circuit = document.getElementById('circuitDivider');
-      if (!circuit) return;
-      var svg = circuit.querySelector('.svg-divider__svg');
-      var paths = circuit.querySelectorAll('.svgd');
-      var nodes = circuit.querySelectorAll('.svgd-n');
+      var circuits = document.querySelectorAll('.svg-divider--circuit');
+      if (!circuits.length) return;
 
-      /* Wait for faster draw-in to finish then start pulsing */
-      var pulseStarted = false;
-      var pulseObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting && !pulseStarted) {
-            pulseStarted = true;
-            setTimeout(startPulse, 2000);
-            pulseObs.unobserve(circuit);
-          }
-        });
-      }, { threshold: 0.3 });
-      pulseObs.observe(circuit);
+      var colors = [
+        { cls: 'svgd-pulse--red',  fill: '#ff4060', glow: 'drop-shadow(0 0 5px rgba(255,64,96,.8))' },
+        { cls: 'svgd-pulse--blue', fill: '#4080ff', glow: 'drop-shadow(0 0 5px rgba(64,128,255,.8))' }
+      ];
 
-      function startPulse() {
-        var pulseCount = 0; /* alternates red/blue per dot */
+      circuits.forEach(function (circuit) {
+        var svg = circuit.querySelector('.svg-divider__svg');
+        var paths = circuit.querySelectorAll('.svgd');
+        var nodes = circuit.querySelectorAll('.svgd-n');
+        if (!svg || !paths.length) return;
 
-        /* Pulse colors */
-        var colors = [
-          { cls: 'svgd-pulse--red',  fill: '#ff4060', glow: 'drop-shadow(0 0 5px rgba(255,64,96,.8))' },
-          { cls: 'svgd-pulse--blue', fill: '#4080ff', glow: 'drop-shadow(0 0 5px rgba(64,128,255,.8))' }
-        ];
+        var started = false;
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !started) {
+              started = true;
+              setTimeout(function () { startPulse(svg, paths, nodes); }, 2000);
+              obs.unobserve(circuit);
+            }
+          });
+        }, { threshold: 0.3 });
+        obs.observe(circuit);
+      });
+
+      function startPulse(svg, paths, nodes) {
+        var pulseCount = 0;
 
         function pulseOnePath(pathIdx) {
           if (pathIdx >= paths.length) {
@@ -871,172 +873,150 @@
           }
           requestAnimationFrame(animateDot);
         }
-        /* Launch 2 concurrent pulse waves offset by 1.5s */
         pulseOnePath(0);
         setTimeout(function () { pulseOnePath(Math.floor(paths.length / 2)); }, 1500);
       }
     })();
 
-    /* ---------- ARCHITECTURAL DIVIDER — WINDOW LIGHTS (white orbs) ---------- */
+    /* ---------- ARCHITECTURAL DIVIDER — WINDOW LIGHTS (all instances) ---------- */
     (function initWindowLights() {
-      var arch = document.getElementById('archDivider');
-      if (!arch) return;
-      var svg = arch.querySelector('.svg-divider__svg');
-      if (!svg) return;
+      var archs = document.querySelectorAll('.svg-divider--arch');
+      if (!archs.length) return;
       var ns = 'http://www.w3.org/2000/svg';
-      var spire = arch.querySelector('line[x1="690"][y1="22"]');
 
-      /* Light positions — bottom row of Building 4 removed */
+      /* Light positions — same for all skylines */
       var positions = [
-        /* Building 1 (x:80-160) — 4 windows */
-        {x:102, y:42, r:2.2}, {x:132, y:42, r:2.2},
-        {x:102, y:60, r:2.2}, {x:132, y:60, r:2.2},
-        /* Building 2 (x:260-380, tall grid) — 6 windows */
-        {x:280, y:29, r:2}, {x:320, y:29, r:2}, {x:360, y:29, r:2},
-        {x:280, y:56, r:2}, {x:320, y:56, r:2}, {x:360, y:56, r:2},
-        /* Dome (x:480-580) — 3 interior lights */
-        {x:510, y:52, r:1.8}, {x:530, y:48, r:2}, {x:550, y:52, r:1.8},
-        /* Tower (x:680-700) — 2 tiny stacked lights */
-        {x:690, y:42, r:1.5}, {x:690, y:58, r:1.5},
-        /* Building 3 (x:800-940, wide grid) — 8 windows */
-        {x:820, y:38, r:2}, {x:860, y:38, r:2}, {x:900, y:38, r:2}, {x:920, y:38, r:1.8},
-        {x:820, y:60, r:2}, {x:860, y:60, r:2}, {x:900, y:60, r:2}, {x:920, y:60, r:1.8},
-        /* Building 4 (x:1040-1140) — top row only */
-        {x:1061, y:48, r:2}, {x:1086, y:48, r:2}, {x:1111, y:48, r:2}
+        {x:102,y:42,r:2.2},{x:132,y:42,r:2.2},{x:102,y:60,r:2.2},{x:132,y:60,r:2.2},
+        {x:280,y:29,r:2},{x:320,y:29,r:2},{x:360,y:29,r:2},
+        {x:280,y:56,r:2},{x:320,y:56,r:2},{x:360,y:56,r:2},
+        {x:510,y:52,r:1.8},{x:530,y:48,r:2},{x:550,y:52,r:1.8},
+        {x:690,y:42,r:1.5},{x:690,y:58,r:1.5},
+        {x:820,y:38,r:2},{x:860,y:38,r:2},{x:900,y:38,r:2},{x:920,y:38,r:1.8},
+        {x:820,y:60,r:2},{x:860,y:60,r:2},{x:900,y:60,r:2},{x:920,y:60,r:1.8},
+        {x:1061,y:48,r:2},{x:1086,y:48,r:2},{x:1111,y:48,r:2}
       ];
 
-      var lightEls = [];
+      archs.forEach(function (arch, archIdx) {
+        var svg = arch.querySelector('.svg-divider__svg');
+        if (!svg) return;
+        var spire = arch.querySelector('line[x1="690"][y1="22"]');
+        var lightEls = [];
+        var filterId = 'winGlow' + archIdx;
 
-      var lightsStarted = false;
-      var lightObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting && !lightsStarted) {
-            lightsStarted = true;
-            setTimeout(lightUpWindows, 1800);
-            lightObs.unobserve(arch);
+        var started = false;
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !started) {
+              started = true;
+              setTimeout(function () { lightUp(svg, spire, lightEls, filterId); }, 1800);
+              obs.unobserve(arch);
+            }
+          });
+        }, { threshold: 0.3 });
+        obs.observe(arch);
+
+        function lightUp(svg, spire, lightEls, filterId) {
+          /* Inject SVG glow filter (unique ID per instance) */
+          var defs = document.createElementNS(ns, 'defs');
+          var filter = document.createElementNS(ns, 'filter');
+          filter.setAttribute('id', filterId);
+          filter.setAttribute('x', '-100%'); filter.setAttribute('y', '-100%');
+          filter.setAttribute('width', '300%'); filter.setAttribute('height', '300%');
+          var blur = document.createElementNS(ns, 'feGaussianBlur');
+          blur.setAttribute('stdDeviation', '2.5');
+          blur.setAttribute('result', 'glow');
+          var merge = document.createElementNS(ns, 'feMerge');
+          var mn1 = document.createElementNS(ns, 'feMergeNode');
+          mn1.setAttribute('in', 'glow');
+          var mn2 = document.createElementNS(ns, 'feMergeNode');
+          mn2.setAttribute('in', 'SourceGraphic');
+          merge.appendChild(mn1); merge.appendChild(mn2);
+          filter.appendChild(blur); filter.appendChild(merge);
+          defs.appendChild(filter);
+          svg.insertBefore(defs, svg.firstChild);
+
+          /* Create light circles */
+          positions.forEach(function (p) {
+            var c = document.createElementNS(ns, 'circle');
+            c.setAttribute('cx', p.x);
+            c.setAttribute('cy', p.y);
+            c.setAttribute('r', p.r);
+            c.setAttribute('fill', 'rgba(255,250,240,0.92)');
+            c.setAttribute('filter', 'url(#' + filterId + ')');
+            c.style.opacity = '0';
+            c.style.transition = 'opacity 0.5s ease';
+            svg.appendChild(c);
+            lightEls.push(c);
+          });
+
+          /* Shuffle and light up */
+          var order = [];
+          for (var i = 0; i < lightEls.length; i++) order.push(i);
+          for (var i = order.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
           }
-        });
-      }, { threshold: 0.3 });
-      lightObs.observe(arch);
+          order.forEach(function (idx, seq) {
+            setTimeout(function () { lightEls[idx].style.opacity = '0.88'; }, seq * 100 + Math.random() * 80);
+          });
 
-      function lightUpWindows() {
-        /* Inject SVG glow filter */
-        var defs = document.createElementNS(ns, 'defs');
-        var filter = document.createElementNS(ns, 'filter');
-        filter.setAttribute('id', 'winGlow');
-        filter.setAttribute('x', '-100%'); filter.setAttribute('y', '-100%');
-        filter.setAttribute('width', '300%'); filter.setAttribute('height', '300%');
-        var blur = document.createElementNS(ns, 'feGaussianBlur');
-        blur.setAttribute('stdDeviation', '2.5');
-        blur.setAttribute('result', 'glow');
-        var merge = document.createElementNS(ns, 'feMerge');
-        var mn1 = document.createElementNS(ns, 'feMergeNode');
-        mn1.setAttribute('in', 'glow');
-        var mn2 = document.createElementNS(ns, 'feMergeNode');
-        mn2.setAttribute('in', 'SourceGraphic');
-        merge.appendChild(mn1); merge.appendChild(mn2);
-        filter.appendChild(blur); filter.appendChild(merge);
-        defs.appendChild(filter);
-        svg.insertBefore(defs, svg.firstChild);
+          /* Tower antenna — beacon + radio waves */
+          if (spire) {
+            setTimeout(function () {
+              var beaconOn = true;
+              setInterval(function () {
+                spire.style.stroke = beaconOn ? '#ff5050' : '#cc2020';
+                spire.style.filter = beaconOn
+                  ? 'drop-shadow(0 0 6px rgba(255,80,80,.9)) drop-shadow(0 0 12px rgba(255,60,60,.4))'
+                  : 'drop-shadow(0 0 2px rgba(200,40,40,.4))';
+                spire.style.opacity = beaconOn ? '1' : '0.6';
+                beaconOn = !beaconOn;
+              }, 900);
 
-        /* Create light circles for every window */
-        positions.forEach(function (p) {
-          var c = document.createElementNS(ns, 'circle');
-          c.setAttribute('cx', p.x);
-          c.setAttribute('cy', p.y);
-          c.setAttribute('r', p.r);
-          c.setAttribute('fill', 'rgba(255,250,240,0.92)');
-          c.setAttribute('filter', 'url(#winGlow)');
-          c.style.opacity = '0';
-          c.style.transition = 'opacity 0.5s ease';
-          svg.appendChild(c);
-          lightEls.push(c);
-        });
-
-        /* Shuffle and light up one by one */
-        var order = [];
-        for (var i = 0; i < lightEls.length; i++) order.push(i);
-        for (var i = order.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
-        }
-        order.forEach(function (idx, seq) {
-          setTimeout(function () {
-            lightEls[idx].style.opacity = '0.88';
-          }, seq * 100 + Math.random() * 80);
-        });
-
-        /* ---- Tower antenna — bright pulsing beacon + radio waves ---- */
-        if (spire) {
-          setTimeout(function () {
-            /* Bright pulsing beacon (brighter red, larger glow) */
-            var beaconOn = true;
-            setInterval(function () {
-              spire.style.stroke = beaconOn ? '#ff5050' : '#cc2020';
-              spire.style.filter = beaconOn
-                ? 'drop-shadow(0 0 6px rgba(255,80,80,.9)) drop-shadow(0 0 12px rgba(255,60,60,.4))'
-                : 'drop-shadow(0 0 2px rgba(200,40,40,.4))';
-              spire.style.opacity = beaconOn ? '1' : '0.6';
-              beaconOn = !beaconOn;
-            }, 900);
-
-            /* Radio signal arcs — small expanding semicircles from antenna tip */
-            var antennaX = 690, antennaY = 8;
-            function emitRadioWave() {
-              var arc = document.createElementNS(ns, 'path');
-              /* Small arc curving upward from the antenna tip */
-              arc.setAttribute('d', 'M' + (antennaX - 8) + ' ' + (antennaY + 2) + ' Q ' + antennaX + ' ' + (antennaY - 10) + ' ' + (antennaX + 8) + ' ' + (antennaY + 2));
-              arc.setAttribute('fill', 'none');
-              arc.setAttribute('stroke', 'rgba(255,80,80,0.7)');
-              arc.setAttribute('stroke-width', '0.8');
-              arc.style.opacity = '0.8';
-              arc.style.transition = 'none';
-              svg.appendChild(arc);
-
-              var waveStart = null;
-              var waveDuration = 1200;
-              function animateWave(ts) {
-                if (!waveStart) waveStart = ts;
-                var t = Math.min((ts - waveStart) / waveDuration, 1);
-                var scale = 1 + t * 2.5;
-                var translateY = -t * 6;
-                arc.setAttribute('transform', 'translate(' + antennaX + ',' + (antennaY + translateY) + ') scale(' + scale + ') translate(' + (-antennaX) + ',' + (-antennaY) + ')');
-                arc.style.opacity = String(0.8 * (1 - t));
-                arc.setAttribute('stroke-width', String(0.8 * (1 - t * 0.5)));
-                if (t < 1) {
-                  requestAnimationFrame(animateWave);
-                } else {
-                  svg.removeChild(arc);
+              var antennaX = 690, antennaY = 8;
+              function emitRadioWave() {
+                var arc = document.createElementNS(ns, 'path');
+                arc.setAttribute('d', 'M' + (antennaX - 8) + ' ' + (antennaY + 2) + ' Q ' + antennaX + ' ' + (antennaY - 10) + ' ' + (antennaX + 8) + ' ' + (antennaY + 2));
+                arc.setAttribute('fill', 'none');
+                arc.setAttribute('stroke', 'rgba(255,80,80,0.7)');
+                arc.setAttribute('stroke-width', '0.8');
+                arc.style.opacity = '0.8';
+                arc.style.transition = 'none';
+                svg.appendChild(arc);
+                var waveStart = null, waveDuration = 1200;
+                function animateWave(ts) {
+                  if (!waveStart) waveStart = ts;
+                  var t = Math.min((ts - waveStart) / waveDuration, 1);
+                  var scale = 1 + t * 2.5;
+                  var translateY = -t * 6;
+                  arc.setAttribute('transform', 'translate(' + antennaX + ',' + (antennaY + translateY) + ') scale(' + scale + ') translate(' + (-antennaX) + ',' + (-antennaY) + ')');
+                  arc.style.opacity = String(0.8 * (1 - t));
+                  arc.setAttribute('stroke-width', String(0.8 * (1 - t * 0.5)));
+                  if (t < 1) { requestAnimationFrame(animateWave); } else { svg.removeChild(arc); }
                 }
+                requestAnimationFrame(animateWave);
               }
-              requestAnimationFrame(animateWave);
-            }
-            /* Emit a radio wave every 2s, staggered with beacon */
-            setInterval(emitRadioWave, 2000);
-            setTimeout(function () { setInterval(emitRadioWave, 2000); }, 1000);
-          }, order.length * 100 + 500);
-        }
+              setInterval(emitRadioWave, 2000);
+              setTimeout(function () { setInterval(emitRadioWave, 2000); }, 1000);
+            }, order.length * 100 + 500);
+          }
 
-        /* ---- Lights blink in and out randomly ---- */
-        setTimeout(function () {
-          setInterval(function () {
-            var pick = Math.floor(Math.random() * lightEls.length);
-            var el = lightEls[pick];
-            var isOn = parseFloat(el.style.opacity) > 0.5;
-            if (isOn) {
-              /* Turn off */
-              el.style.opacity = '0';
-              /* Turn back on after 1-4 seconds */
-              setTimeout(function () {
+          /* Lights blink in and out */
+          setTimeout(function () {
+            setInterval(function () {
+              var pick = Math.floor(Math.random() * lightEls.length);
+              var el = lightEls[pick];
+              var isOn = parseFloat(el.style.opacity) > 0.5;
+              if (isOn) {
+                el.style.opacity = '0';
+                setTimeout(function () { el.style.opacity = '0.88'; }, 1000 + Math.random() * 3000);
+              } else {
                 el.style.opacity = '0.88';
-              }, 1000 + Math.random() * 3000);
-            } else {
-              /* Turn on */
-              el.style.opacity = '0.88';
-            }
-          }, 1500 + Math.random() * 1500);
-        }, order.length * 100 + 1000);
-      }
+              }
+            }, 1500 + Math.random() * 1500);
+          }, order.length * 100 + 1000);
+        }
+      });
     })();
 
     /* ---------- FOOTER CONSTELLATION ---------- */
