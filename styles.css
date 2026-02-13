@@ -726,6 +726,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* RESPONSIVE */
 @media(max-width:768px){
   .nav__links{display:none}.nav__toggle{display:flex}
+  .nav__logo{display:none}
   .hero__scroll-indicator{display:none}
   .hero__ctas{gap:12px}
   .hero__ctas .btn{padding:14px 24px;font-size:.75rem}
@@ -733,12 +734,11 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .project-item:nth-child(even) .project-item__visual,.project-item:nth-child(even) .project-item__info{order:unset}
   .project-item__num{display:none}
   .service-row{grid-template-columns:36px 1fr 32px}.service-row__desc{display:none}
-  .stats-grid{grid-template-columns:repeat(2,1fr);gap:16px}
-  .stat{padding:8px 0}
-  .stat .h1{font-size:clamp(1.6rem,4.5vw,2.2rem);line-height:1;margin-bottom:4px}
-  .stat__label.body-sm{font-size:.72rem}
-  .stat__digit-wrap{height:1em}
-  .stat__digit-reel span{height:1em;line-height:1}
+  .stats-section.section--tight{padding:24px 0}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:8px 16px}
+  .stat{padding:4px 0}
+  .stat .stat__number.h1{font-size:1.75rem;line-height:1;margin-bottom:2px;display:block}
+  .stat .stat__label.body-sm{font-size:.7rem;line-height:1.2}
   .footer__top{flex-direction:column;gap:40px}.footer__bottom{flex-direction:column;text-align:center}
   .cursor-dot{display:none}
   .story-grid{grid-template-columns:1fr;gap:16px}
@@ -786,9 +786,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .pricing-main::before{display:none}
   .hero__ctas{gap:10px}
   .hero__ctas .btn{padding:12px 18px;font-size:.7rem;letter-spacing:.06em}
-  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .stat{padding:6px 0}
-  .stat .h1{font-size:1.4rem;line-height:1;margin-bottom:2px}
-  .stat__label.body-sm{font-size:.65rem}
+  .stats-section.section--tight{padding:18px 0}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:4px 12px}
+  .stat{padding:2px 0}
+  .stat .stat__number.h1{font-size:1.5rem;line-height:1;margin-bottom:1px}
+  .stat .stat__label.body-sm{font-size:.62rem;line-height:1.2}
 }
 @media(max-width:480px){:root{--pad:20px}}
