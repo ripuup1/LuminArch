@@ -819,7 +819,7 @@
 
         function pulseOnePath(pathIdx) {
           if (pathIdx >= paths.length) {
-            setTimeout(function () { pulseOnePath(0); }, 800);
+            setTimeout(function () { pulseOnePath(0); }, 1200);
             return;
           }
           var path = paths[pathIdx];
@@ -834,7 +834,7 @@
           dot.setAttribute('class', 'svgd-pulse ' + color.cls);
           svg.appendChild(dot);
 
-          var duration = Math.max(350, len * 0.8);
+          var duration = Math.max(500, len * 1.1);
           var startTime = null;
           function animateDot(ts) {
             if (!startTime) startTime = ts;
@@ -866,7 +866,7 @@
                   n.style.opacity = '';
                 });
               }, 200);
-              setTimeout(function () { pulseOnePath(pathIdx + 1); }, 80);
+              setTimeout(function () { pulseOnePath(pathIdx + 1); }, 120);
             }
           }
           requestAnimationFrame(animateDot);
@@ -1064,7 +1064,7 @@
           dx: (Math.random() - 0.5) * 0.2,
           dy: (Math.random() - 0.5) * 0.15,
           r: Math.random() * 1.5 + 0.8,
-          opacity: Math.random() * 0.3 + 0.15
+          opacity: Math.random() * 0.3 + 0.35
         });
       }
 
@@ -1091,7 +1091,7 @@
             var ddy = stars[i].y - stars[j].y;
             var dist = Math.sqrt(ddx * ddx + ddy * ddy);
             if (dist < CONNECT_DIST) {
-              var alpha = (1 - dist / CONNECT_DIST) * 0.12;
+              var alpha = (1 - dist / CONNECT_DIST) * 0.25;
               ctx2.beginPath();
               ctx2.moveTo(stars[i].x, stars[i].y);
               ctx2.lineTo(stars[j].x, stars[j].y);
