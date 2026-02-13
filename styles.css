@@ -521,9 +521,9 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 /* ===== SVG SECTION DIVIDERS ===== */
 .svg-divider{padding:clamp(16px,3vh,32px) 0;position:relative;z-index:2;overflow:visible}
 .svg-divider__svg{width:100%;height:auto;max-height:80px}
-.svgd{stroke:var(--accent);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:0;stroke-dasharray:2000;stroke-dashoffset:2000;transition:stroke-dashoffset 2.5s ease-out,opacity .8s ease}
+.svgd{stroke:var(--accent);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:0;stroke-dasharray:2000;stroke-dashoffset:2000;transition:stroke-dashoffset 1.5s ease-out,opacity .8s ease}
 .svg-divider.visible .svgd{stroke-dashoffset:0;opacity:.45}
-.svgd-n{fill:var(--accent);opacity:0;transition:opacity .8s ease 1.8s}
+.svgd-n{fill:var(--accent);opacity:0;transition:opacity .8s ease 1s}
 .svg-divider.visible .svgd-n{opacity:.5}
 .svgd-c{stroke:var(--accent);stroke-width:1;fill:none;opacity:0;stroke-dasharray:200;stroke-dashoffset:200;transition:stroke-dashoffset 1.5s ease-out 1.2s,opacity .8s ease 1.2s}
 .svg-divider.visible .svgd-c{stroke-dashoffset:0;opacity:.4}

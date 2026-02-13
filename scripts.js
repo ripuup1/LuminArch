@@ -789,13 +789,13 @@
       var paths = circuit.querySelectorAll('.svgd');
       var nodes = circuit.querySelectorAll('.svgd-n');
 
-      /* Wait for draw-in to finish (~3s after visible) then start pulsing */
+      /* Wait for faster draw-in to finish then start pulsing */
       var pulseStarted = false;
       var pulseObs = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting && !pulseStarted) {
             pulseStarted = true;
-            setTimeout(startPulse, 3200); /* after draw-in animation */
+            setTimeout(startPulse, 2000);
             pulseObs.unobserve(circuit);
           }
         });
@@ -803,11 +803,10 @@
       pulseObs.observe(circuit);
 
       function startPulse() {
-        /* Pulse along each path sequentially */
+        /* Pulse wave — travels along each path sequentially */
         function pulseOnePath(pathIdx) {
           if (pathIdx >= paths.length) {
-            /* Pause then restart */
-            setTimeout(function () { pulseOnePath(0); }, 2000);
+            setTimeout(function () { pulseOnePath(0); }, 800);
             return;
           }
           var path = paths[pathIdx];
@@ -819,7 +818,7 @@
           dot.setAttribute('class', 'svgd-pulse');
           svg.appendChild(dot);
 
-          var duration = Math.max(600, len * 1.5);
+          var duration = Math.max(350, len * 0.8);
           var startTime = null;
           function animateDot(ts) {
             if (!startTime) startTime = ts;
@@ -829,7 +828,6 @@
             dot.setAttribute('cy', pt.y);
             dot.style.opacity = t < 0.1 ? t * 10 : (t > 0.85 ? (1 - t) / 0.15 : 1);
 
-            /* Flash nearby nodes */
             nodes.forEach(function (n) {
               var nx = parseFloat(n.getAttribute('cx'));
               var ny = parseFloat(n.getAttribute('cy'));
@@ -845,20 +843,21 @@
               requestAnimationFrame(animateDot);
             } else {
               svg.removeChild(dot);
-              /* Reset node styles after a brief glow */
               setTimeout(function () {
                 nodes.forEach(function (n) {
                   n.style.fill = '';
                   n.style.filter = '';
                   n.style.opacity = '';
                 });
-              }, 300);
-              setTimeout(function () { pulseOnePath(pathIdx + 1); }, 150);
+              }, 200);
+              setTimeout(function () { pulseOnePath(pathIdx + 1); }, 80);
             }
           }
           requestAnimationFrame(animateDot);
         }
+        /* Launch 2 concurrent pulse waves offset by 1.5s */
         pulseOnePath(0);
+        setTimeout(function () { pulseOnePath(Math.floor(paths.length / 2)); }, 1500);
       }
     })();
 
@@ -868,11 +867,12 @@
       if (!arch) return;
       var svg = arch.querySelector('.svg-divider__svg');
       if (!svg) return;
+      var ns = 'http://www.w3.org/2000/svg';
       var spire = arch.querySelector('line[x1="690"][y1="22"]');
 
-      /* Light positions for every building */
+      /* Light positions — bottom row of Building 4 removed */
       var positions = [
-        /* Building 1 (x:80-160, h 28-72) — 4 windows */
+        /* Building 1 (x:80-160) — 4 windows */
         {x:102, y:42, r:2.2}, {x:132, y:42, r:2.2},
         {x:102, y:60, r:2.2}, {x:132, y:60, r:2.2},
         /* Building 2 (x:260-380, tall grid) — 6 windows */
@@ -885,9 +885,8 @@
         /* Building 3 (x:800-940, wide grid) — 8 windows */
         {x:820, y:38, r:2}, {x:860, y:38, r:2}, {x:900, y:38, r:2}, {x:920, y:38, r:1.8},
         {x:820, y:60, r:2}, {x:860, y:60, r:2}, {x:900, y:60, r:2}, {x:920, y:60, r:1.8},
-        /* Building 4 (x:1040-1140) — 6 windows (2 rows) */
-        {x:1061, y:48, r:2}, {x:1086, y:48, r:2}, {x:1111, y:48, r:2},
-        {x:1061, y:62, r:1.8}, {x:1086, y:62, r:1.8}, {x:1111, y:62, r:1.8}
+        /* Building 4 (x:1040-1140) — top row only */
+        {x:1061, y:48, r:2}, {x:1086, y:48, r:2}, {x:1111, y:48, r:2}
       ];
 
       var lightEls = [];
@@ -906,7 +905,6 @@
 
       function lightUpWindows() {
         /* Inject SVG glow filter */
-        var ns = 'http://www.w3.org/2000/svg';
         var defs = document.createElementNS(ns, 'defs');
         var filter = document.createElementNS(ns, 'filter');
         filter.setAttribute('id', 'winGlow');
@@ -952,28 +950,75 @@
           }, seq * 220 + Math.random() * 140);
         });
 
-        /* Tower spire red beacon */
+        /* ---- Tower antenna — bright pulsing beacon + radio waves ---- */
         if (spire) {
           setTimeout(function () {
-            var blinkOn = true;
+            /* Bright pulsing beacon (brighter red, larger glow) */
+            var beaconOn = true;
             setInterval(function () {
-              spire.style.stroke = blinkOn ? '#ff4040' : '';
-              spire.style.filter = blinkOn ? 'drop-shadow(0 0 3px rgba(255,60,60,.7))' : '';
-              spire.style.opacity = blinkOn ? '0.9' : '';
-              blinkOn = !blinkOn;
-            }, 1200);
+              spire.style.stroke = beaconOn ? '#ff5050' : '#cc2020';
+              spire.style.filter = beaconOn
+                ? 'drop-shadow(0 0 6px rgba(255,80,80,.9)) drop-shadow(0 0 12px rgba(255,60,60,.4))'
+                : 'drop-shadow(0 0 2px rgba(200,40,40,.4))';
+              spire.style.opacity = beaconOn ? '1' : '0.6';
+              beaconOn = !beaconOn;
+            }, 900);
+
+            /* Radio signal arcs — small expanding semicircles from antenna tip */
+            var antennaX = 690, antennaY = 8;
+            function emitRadioWave() {
+              var arc = document.createElementNS(ns, 'path');
+              /* Small arc curving upward from the antenna tip */
+              arc.setAttribute('d', 'M' + (antennaX - 8) + ' ' + (antennaY + 2) + ' Q ' + antennaX + ' ' + (antennaY - 10) + ' ' + (antennaX + 8) + ' ' + (antennaY + 2));
+              arc.setAttribute('fill', 'none');
+              arc.setAttribute('stroke', 'rgba(255,80,80,0.7)');
+              arc.setAttribute('stroke-width', '0.8');
+              arc.style.opacity = '0.8';
+              arc.style.transition = 'none';
+              svg.appendChild(arc);
+
+              var waveStart = null;
+              var waveDuration = 1200;
+              function animateWave(ts) {
+                if (!waveStart) waveStart = ts;
+                var t = Math.min((ts - waveStart) / waveDuration, 1);
+                var scale = 1 + t * 2.5;
+                var translateY = -t * 6;
+                arc.setAttribute('transform', 'translate(' + antennaX + ',' + (antennaY + translateY) + ') scale(' + scale + ') translate(' + (-antennaX) + ',' + (-antennaY) + ')');
+                arc.style.opacity = String(0.8 * (1 - t));
+                arc.setAttribute('stroke-width', String(0.8 * (1 - t * 0.5)));
+                if (t < 1) {
+                  requestAnimationFrame(animateWave);
+                } else {
+                  svg.removeChild(arc);
+                }
+              }
+              requestAnimationFrame(animateWave);
+            }
+            /* Emit a radio wave every 2s, staggered with beacon */
+            setInterval(emitRadioWave, 2000);
+            setTimeout(function () { setInterval(emitRadioWave, 2000); }, 1000);
           }, order.length * 220 + 500);
         }
 
-        /* Random flicker on lit windows */
+        /* ---- Lights blink in and out randomly ---- */
         setTimeout(function () {
           setInterval(function () {
             var pick = Math.floor(Math.random() * lightEls.length);
             var el = lightEls[pick];
-            if (parseFloat(el.style.opacity) < 0.5) return;
-            el.style.opacity = '0.18';
-            setTimeout(function () { el.style.opacity = '0.88'; }, 110 + Math.random() * 180);
-          }, 2500 + Math.random() * 2000);
+            var isOn = parseFloat(el.style.opacity) > 0.5;
+            if (isOn) {
+              /* Turn off */
+              el.style.opacity = '0';
+              /* Turn back on after 1-4 seconds */
+              setTimeout(function () {
+                el.style.opacity = '0.88';
+              }, 1000 + Math.random() * 3000);
+            } else {
+              /* Turn on */
+              el.style.opacity = '0.88';
+            }
+          }, 1500 + Math.random() * 1500);
         }, order.length * 220 + 1000);
       }
     })();
