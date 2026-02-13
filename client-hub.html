@@ -218,6 +218,36 @@
   if(document.readyState==='complete') reveal();
   else window.addEventListener('load',reveal);
 })();
+
+/* Gold cursor trail (desktop only) */
+(function(){
+  if('ontouchstart' in window||window.innerWidth<768) return;
+  if(!window.matchMedia('(pointer: fine)').matches) return;
+  var TRAIL=8,LEAD=4,trail=[],mx=-100,my=-100,on=false;
+  var c=document.createElement('canvas');
+  c.style.cssText='position:fixed;inset:0;z-index:9999;pointer-events:none';
+  document.body.appendChild(c);
+  var cx=c.getContext('2d');
+  function rs(){c.width=window.innerWidth;c.height=window.innerHeight}
+  rs(); window.addEventListener('resize',rs);
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;if(!on){on=true;draw()}});
+  document.addEventListener('mouseleave',function(){on=false;trail=[];cx.clearRect(0,0,c.width,c.height)});
+  var cols=['#F5D060','#E8C84A','#D4AF37','#C9A430','#B8942D'];
+  function draw(){
+    if(!on) return;
+    trail.unshift({x:mx,y:my});
+    if(trail.length>TRAIL) trail.length=TRAIL;
+    cx.clearRect(0,0,c.width,c.height);
+    for(var i=trail.length-1;i>=0;i--){
+      var t=i/(TRAIL-1),r=LEAD*(1-t*0.75),a=0.9-t*0.85,p=trail[i];
+      cx.beginPath();cx.arc(p.x,p.y,r+3,0,Math.PI*2);
+      cx.fillStyle='rgba(245,208,96,'+(a*0.25)+')';cx.fill();
+      cx.beginPath();cx.arc(p.x,p.y,r,0,Math.PI*2);
+      cx.fillStyle=cols[Math.min(i,cols.length-1)];cx.globalAlpha=a;cx.fill();cx.globalAlpha=1;
+    }
+    requestAnimationFrame(draw);
+  }
+})();
 </script>
 </body>
 </html>

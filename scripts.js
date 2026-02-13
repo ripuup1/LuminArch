@@ -862,19 +862,42 @@
       }
     })();
 
-    /* ---------- ARCHITECTURAL DIVIDER — WINDOW LIGHTS ---------- */
+    /* ---------- ARCHITECTURAL DIVIDER — WINDOW LIGHTS (white orbs) ---------- */
     (function initWindowLights() {
       var arch = document.getElementById('archDivider');
       if (!arch) return;
-      var windows = arch.querySelectorAll('.svgd-win');
-      var spire = arch.querySelector('line[x1="690"][y1="22"]'); /* tower antenna */
+      var svg = arch.querySelector('.svg-divider__svg');
+      if (!svg) return;
+      var spire = arch.querySelector('line[x1="690"][y1="22"]');
+
+      /* Light positions for every building */
+      var positions = [
+        /* Building 1 (x:80-160, h 28-72) — 4 windows */
+        {x:102, y:42, r:2.2}, {x:132, y:42, r:2.2},
+        {x:102, y:60, r:2.2}, {x:132, y:60, r:2.2},
+        /* Building 2 (x:260-380, tall grid) — 6 windows */
+        {x:280, y:29, r:2}, {x:320, y:29, r:2}, {x:360, y:29, r:2},
+        {x:280, y:56, r:2}, {x:320, y:56, r:2}, {x:360, y:56, r:2},
+        /* Dome (x:480-580) — 3 interior lights */
+        {x:510, y:52, r:1.8}, {x:530, y:48, r:2}, {x:550, y:52, r:1.8},
+        /* Tower (x:680-700) — 2 tiny stacked lights */
+        {x:690, y:42, r:1.5}, {x:690, y:58, r:1.5},
+        /* Building 3 (x:800-940, wide grid) — 8 windows */
+        {x:820, y:38, r:2}, {x:860, y:38, r:2}, {x:900, y:38, r:2}, {x:920, y:38, r:1.8},
+        {x:820, y:60, r:2}, {x:860, y:60, r:2}, {x:900, y:60, r:2}, {x:920, y:60, r:1.8},
+        /* Building 4 (x:1040-1140) — 6 windows (2 rows) */
+        {x:1061, y:48, r:2}, {x:1086, y:48, r:2}, {x:1111, y:48, r:2},
+        {x:1061, y:62, r:1.8}, {x:1086, y:62, r:1.8}, {x:1111, y:62, r:1.8}
+      ];
+
+      var lightEls = [];
 
       var lightsStarted = false;
       var lightObs = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting && !lightsStarted) {
             lightsStarted = true;
-            setTimeout(lightUpWindows, 3000); /* after draw-in */
+            setTimeout(lightUpWindows, 3000);
             lightObs.unobserve(arch);
           }
         });
@@ -882,21 +905,54 @@
       lightObs.observe(arch);
 
       function lightUpWindows() {
-        /* Shuffle window order for random lighting */
-        var indices = [];
-        for (var i = 0; i < windows.length; i++) indices.push(i);
-        for (var i = indices.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
-        }
+        /* Inject SVG glow filter */
+        var ns = 'http://www.w3.org/2000/svg';
+        var defs = document.createElementNS(ns, 'defs');
+        var filter = document.createElementNS(ns, 'filter');
+        filter.setAttribute('id', 'winGlow');
+        filter.setAttribute('x', '-100%'); filter.setAttribute('y', '-100%');
+        filter.setAttribute('width', '300%'); filter.setAttribute('height', '300%');
+        var blur = document.createElementNS(ns, 'feGaussianBlur');
+        blur.setAttribute('stdDeviation', '2.5');
+        blur.setAttribute('result', 'glow');
+        var merge = document.createElementNS(ns, 'feMerge');
+        var mn1 = document.createElementNS(ns, 'feMergeNode');
+        mn1.setAttribute('in', 'glow');
+        var mn2 = document.createElementNS(ns, 'feMergeNode');
+        mn2.setAttribute('in', 'SourceGraphic');
+        merge.appendChild(mn1); merge.appendChild(mn2);
+        filter.appendChild(blur); filter.appendChild(merge);
+        defs.appendChild(filter);
+        svg.insertBefore(defs, svg.firstChild);
 
-        indices.forEach(function (idx, order) {
-          setTimeout(function () {
-            windows[idx].classList.add('lit');
-          }, order * 400 + Math.random() * 200);
+        /* Create light circles for every window */
+        positions.forEach(function (p) {
+          var c = document.createElementNS(ns, 'circle');
+          c.setAttribute('cx', p.x);
+          c.setAttribute('cy', p.y);
+          c.setAttribute('r', p.r);
+          c.setAttribute('fill', 'rgba(255,250,240,0.92)');
+          c.setAttribute('filter', 'url(#winGlow)');
+          c.style.opacity = '0';
+          c.style.transition = 'opacity 0.5s ease';
+          svg.appendChild(c);
+          lightEls.push(c);
         });
 
-        /* Blink the tower spire light */
+        /* Shuffle and light up one by one */
+        var order = [];
+        for (var i = 0; i < lightEls.length; i++) order.push(i);
+        for (var i = order.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+        }
+        order.forEach(function (idx, seq) {
+          setTimeout(function () {
+            lightEls[idx].style.opacity = '0.88';
+          }, seq * 220 + Math.random() * 140);
+        });
+
+        /* Tower spire red beacon */
         if (spire) {
           setTimeout(function () {
             var blinkOn = true;
@@ -906,19 +962,19 @@
               spire.style.opacity = blinkOn ? '0.9' : '';
               blinkOn = !blinkOn;
             }, 1200);
-          }, indices.length * 400 + 500);
+          }, order.length * 220 + 500);
         }
 
-        /* Subtle flicker on random windows */
+        /* Random flicker on lit windows */
         setTimeout(function () {
           setInterval(function () {
-            var pick = Math.floor(Math.random() * windows.length);
-            var w = windows[pick];
-            if (!w.classList.contains('lit')) return;
-            w.style.opacity = '0.25';
-            setTimeout(function () { w.style.opacity = ''; }, 150 + Math.random() * 200);
-          }, 3000 + Math.random() * 2000);
-        }, indices.length * 400 + 1000);
+            var pick = Math.floor(Math.random() * lightEls.length);
+            var el = lightEls[pick];
+            if (parseFloat(el.style.opacity) < 0.5) return;
+            el.style.opacity = '0.18';
+            setTimeout(function () { el.style.opacity = '0.88'; }, 110 + Math.random() * 180);
+          }, 2500 + Math.random() * 2000);
+        }, order.length * 220 + 1000);
       }
     })();
 
@@ -1051,5 +1107,82 @@ function toggleAddon(id) {
         tabs[0].classList.add('active');
       }
     }, { passive: true });
+  }
+})();
+
+/* ---------- GOLD CURSOR PARTICLE TRAIL (desktop only) ---------- */
+(function initCursorTrail() {
+  /* Skip on mobile / touch devices */
+  if ('ontouchstart' in window || window.innerWidth < 768) return;
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  var TRAIL_LENGTH = 8;
+  var LEAD_RADIUS = 4;
+  var trail = [];
+  var mouseX = -100, mouseY = -100;
+  var active = false;
+
+  /* Create fixed overlay canvas */
+  var cvs = document.createElement('canvas');
+  cvs.id = 'cursorTrail';
+  cvs.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none';
+  document.body.appendChild(cvs);
+  var ctx = cvs.getContext('2d');
+
+  function resize() {
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* Track mouse */
+  document.addEventListener('mousemove', function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!active) { active = true; drawTrail(); }
+  });
+
+  /* Hide trail when mouse leaves the window */
+  document.addEventListener('mouseleave', function () {
+    active = false;
+    trail = [];
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+  });
+
+  /* Gold gradient colors */
+  var colors = ['#F5D060', '#E8C84A', '#D4AF37', '#C9A430', '#B8942D'];
+
+  function drawTrail() {
+    if (!active) return;
+
+    /* Add current position to front of trail */
+    trail.unshift({ x: mouseX, y: mouseY });
+    if (trail.length > TRAIL_LENGTH) trail.length = TRAIL_LENGTH;
+
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    for (var i = trail.length - 1; i >= 0; i--) {
+      var t = i / (TRAIL_LENGTH - 1); /* 0 = lead, 1 = tail */
+      var radius = LEAD_RADIUS * (1 - t * 0.75); /* shrink towards tail */
+      var alpha = 0.9 - t * 0.85; /* fade towards tail */
+      var p = trail[i];
+
+      /* Outer glow */
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius + 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245,208,96,' + (alpha * 0.25) + ')';
+      ctx.fill();
+
+      /* Core dot */
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = colors[Math.min(i, colors.length - 1)];
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    requestAnimationFrame(drawTrail);
   }
 })();
