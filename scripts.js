@@ -725,6 +725,27 @@
         requestAnimationFrame(drawFrame);
       }
       drawFrame();
+
+      /* ---------- INTRO FIREWORKS — 3 auto-bursts on page load ---------- */
+      if (!isMobile && fireworksReady) {
+        var introOrbs = orbs.filter(function (o) { return o.interactive && o.alive; });
+        /* Pick 3 random interactive orbs spaced apart */
+        for (var ib = 0; ib < Math.min(3, introOrbs.length); ib++) {
+          (function (idx, delay) {
+            setTimeout(function () {
+              /* Re-pick a random alive interactive orb each time */
+              var candidates = orbs.filter(function (o) { return o.interactive && o.alive; });
+              if (candidates.length === 0) return;
+              var pick = candidates[Math.floor(Math.random() * candidates.length)];
+              spawnFirework(pick.x, pick.y);
+              pick.alive = false;
+              (function (ref) {
+                setTimeout(function () { respawnOrb(ref); }, 2000 + Math.random() * 2000);
+              })(pick);
+            }, delay);
+          })(ib, 1200 + ib * 1000); /* first at 1.2s (after page loads), then 1s apart */
+        }
+      }
     }
   }); // end DOMContentLoaded
 })();
