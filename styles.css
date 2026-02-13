@@ -528,8 +528,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .svgd-c{stroke:var(--accent);stroke-width:1;fill:none;opacity:0;stroke-dasharray:200;stroke-dashoffset:200;transition:stroke-dashoffset 1.5s ease-out 1.2s,opacity .8s ease 1.2s}
 .svg-divider.visible .svgd-c{stroke-dashoffset:0;opacity:.4}
 
-/* Circuit pulse — glowing dot that travels along paths */
-.svgd-pulse{fill:#F5D060;opacity:0;filter:drop-shadow(0 0 4px rgba(245,215,80,.8));transition:none}
+/* Circuit pulse — alternating red/blue dots (color set by JS) */
+.svgd-pulse{opacity:0;transition:none}
+.svgd-pulse--red{fill:#ff4060;filter:drop-shadow(0 0 5px rgba(255,64,96,.85))}
+.svgd-pulse--blue{fill:#4080ff;filter:drop-shadow(0 0 5px rgba(64,128,255,.85))}
 
 /* Window outlines — draw-in transition only (lights handled by JS circles) */
 .svgd-win{transition:stroke-dashoffset 1.5s ease-out 1.2s,opacity .8s ease 1.2s}
@@ -730,7 +732,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .project-item:nth-child(even) .project-item__visual,.project-item:nth-child(even) .project-item__info{order:unset}
   .project-item__num{display:none}
   .service-row{grid-template-columns:36px 1fr 32px}.service-row__desc{display:none}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+  .stat{padding:12px 0}
+  .stat .h1{font-size:clamp(1.8rem,5vw,2.5rem)}
+  .stat__label.body-sm{font-size:.75rem}
   .footer__top{flex-direction:column;gap:40px}.footer__bottom{flex-direction:column;text-align:center}
   .cursor-dot{display:none}
   .story-grid{grid-template-columns:1fr;gap:16px}
@@ -777,5 +782,8 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .pricing-main::before{display:none}
   .hero__ctas{gap:10px}
   .hero__ctas .btn{padding:12px 18px;font-size:.7rem;letter-spacing:.06em}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .stat .h1{font-size:1.6rem}
+  .stat__label.body-sm{font-size:.68rem}
 }
 @media(max-width:480px){:root{--pad:20px}}

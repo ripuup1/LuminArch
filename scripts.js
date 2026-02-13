@@ -561,9 +561,9 @@
       resize();
       window.addEventListener('resize', resize);
 
-      /* Create orbs — 50% are interactive (staggered: every other one) */
+      /* Create orbs — 50% interactive on desktop, 25% on mobile */
       for (var i = 0; i < ORB_COUNT; i++) {
-        var interactive = !isMobile && (i % 2 === 0);
+        var interactive = isMobile ? (i % 4 === 0) : (i % 2 === 0);
         orbs.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
@@ -633,34 +633,40 @@
         orb.r = Math.random() * 2 + 3.5;
       }
 
-      /* Click handler — listen on document so clicks work through content layers */
-      if (!isMobile) {
-        var interactiveTags = { A:1, BUTTON:1, INPUT:1, TEXTAREA:1, SELECT:1, LABEL:1 };
-        document.addEventListener('click', function (e) {
-          /* Skip if fireworks not yet enabled (about page: wait for rocket) */
-          if (!fireworksReady) return;
-          /* Skip if user clicked an actual interactive element */
-          var tag = e.target.tagName;
-          if (interactiveTags[tag] || e.target.closest('a, button, input, textarea, select, .nav, .btn')) return;
-          var mx = e.clientX;
-          var my = e.clientY;
-          for (var i = 0; i < orbs.length; i++) {
-            var o = orbs[i];
-            if (!o.interactive || !o.alive) continue;
-            var hitRadius = o.r + 14; /* generous hit area */
-            var ddx = o.x - mx;
-            var ddy = o.y - my;
-            if (ddx * ddx + ddy * ddy < hitRadius * hitRadius) {
-              spawnFirework(o.x, o.y);
-              o.alive = false;
-              /* Respawn after 2-4 seconds at new location */
-              (function (ref) {
-                setTimeout(function () { respawnOrb(ref); }, 2000 + Math.random() * 2000);
-              })(o);
-              break; /* only one orb per click */
-            }
+      /* Click/tap handler — works on both desktop and mobile */
+      var interactiveTags = { A:1, BUTTON:1, INPUT:1, TEXTAREA:1, SELECT:1, LABEL:1 };
+      function handleFireworkTap(e) {
+        if (!fireworksReady) return;
+        var tag = e.target.tagName;
+        if (interactiveTags[tag] || e.target.closest('a, button, input, textarea, select, .nav, .btn')) return;
+        var mx, my;
+        if (e.touches && e.touches.length) {
+          mx = e.touches[0].clientX;
+          my = e.touches[0].clientY;
+        } else {
+          mx = e.clientX;
+          my = e.clientY;
+        }
+        var hitExtra = isMobile ? 22 : 14; /* larger hit area on mobile */
+        for (var i = 0; i < orbs.length; i++) {
+          var o = orbs[i];
+          if (!o.interactive || !o.alive) continue;
+          var hitRadius = o.r + hitExtra;
+          var ddx = o.x - mx;
+          var ddy = o.y - my;
+          if (ddx * ddx + ddy * ddy < hitRadius * hitRadius) {
+            spawnFirework(o.x, o.y);
+            o.alive = false;
+            (function (ref) {
+              setTimeout(function () { respawnOrb(ref); }, 2000 + Math.random() * 2000);
+            })(o);
+            break;
           }
-        });
+        }
+      }
+      document.addEventListener('click', handleFireworkTap);
+      if (isMobile) {
+        document.addEventListener('touchstart', handleFireworkTap, { passive: true });
       }
 
       /* Main render loop */
@@ -761,7 +767,7 @@
 
       /* ---------- INTRO FIREWORKS — 3 auto-bursts on homepage only ---------- */
       var isHomePage = !!document.querySelector('.hero');
-      if (!isMobile && fireworksReady && isHomePage) {
+      if (fireworksReady && isHomePage) {
         var introOrbs = orbs.filter(function (o) { return o.interactive && o.alive; });
         /* Pick 3 random interactive orbs spaced apart */
         for (var ib = 0; ib < Math.min(3, introOrbs.length); ib++) {
@@ -803,7 +809,14 @@
       pulseObs.observe(circuit);
 
       function startPulse() {
-        /* Pulse wave — travels along each path sequentially */
+        var pulseCount = 0; /* alternates red/blue per dot */
+
+        /* Pulse colors */
+        var colors = [
+          { cls: 'svgd-pulse--red',  fill: '#ff4060', glow: 'drop-shadow(0 0 5px rgba(255,64,96,.8))' },
+          { cls: 'svgd-pulse--blue', fill: '#4080ff', glow: 'drop-shadow(0 0 5px rgba(64,128,255,.8))' }
+        ];
+
         function pulseOnePath(pathIdx) {
           if (pathIdx >= paths.length) {
             setTimeout(function () { pulseOnePath(0); }, 800);
@@ -813,9 +826,12 @@
           var len = path.getTotalLength();
           if (!len || len < 10) { pulseOnePath(pathIdx + 1); return; }
 
+          var color = colors[pulseCount % 2];
+          pulseCount++;
+
           var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           dot.setAttribute('r', '3');
-          dot.setAttribute('class', 'svgd-pulse');
+          dot.setAttribute('class', 'svgd-pulse ' + color.cls);
           svg.appendChild(dot);
 
           var duration = Math.max(350, len * 0.8);
@@ -833,8 +849,8 @@
               var ny = parseFloat(n.getAttribute('cy'));
               var dist = Math.sqrt((pt.x - nx) * (pt.x - nx) + (pt.y - ny) * (pt.y - ny));
               if (dist < 20) {
-                n.style.fill = '#F5D060';
-                n.style.filter = 'drop-shadow(0 0 4px rgba(245,215,80,.8))';
+                n.style.fill = color.fill;
+                n.style.filter = color.glow;
                 n.style.opacity = '0.9';
               }
             });
