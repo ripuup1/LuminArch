@@ -474,10 +474,10 @@
         /* Stagger each digit's roll */
         (function (r, slots, delay) {
           setTimeout(function () {
-            r.style.transition = 'transform ' + (0.6 + slots * 0.04) + 's cubic-bezier(.2,.8,.3,1)';
+            r.style.transition = 'transform ' + (1.2 + slots * 0.08) + 's cubic-bezier(.15,.85,.25,1)';
             r.style.transform = 'translateY(-' + (slots) + 'em)';
           }, delay);
-        })(reel, totalSlots, 100 + idx * 200);
+        })(reel, totalSlots, 150 + idx * 350);
       });
 
       /* Add suffix after last digit */
@@ -912,7 +912,7 @@
         entries.forEach(function (e) {
           if (e.isIntersecting && !lightsStarted) {
             lightsStarted = true;
-            setTimeout(lightUpWindows, 3000);
+            setTimeout(lightUpWindows, 1800);
             lightObs.unobserve(arch);
           }
         });
@@ -963,7 +963,7 @@
         order.forEach(function (idx, seq) {
           setTimeout(function () {
             lightEls[idx].style.opacity = '0.88';
-          }, seq * 220 + Math.random() * 140);
+          }, seq * 100 + Math.random() * 80);
         });
 
         /* ---- Tower antenna — bright pulsing beacon + radio waves ---- */
@@ -1014,7 +1014,7 @@
             /* Emit a radio wave every 2s, staggered with beacon */
             setInterval(emitRadioWave, 2000);
             setTimeout(function () { setInterval(emitRadioWave, 2000); }, 1000);
-          }, order.length * 220 + 500);
+          }, order.length * 100 + 500);
         }
 
         /* ---- Lights blink in and out randomly ---- */
@@ -1035,7 +1035,7 @@
               el.style.opacity = '0.88';
             }
           }, 1500 + Math.random() * 1500);
-        }, order.length * 220 + 1000);
+        }, order.length * 100 + 1000);
       }
     })();
 
