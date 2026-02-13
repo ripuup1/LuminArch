@@ -761,7 +761,7 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
   .rocket-arc--mobile{display:block}
   .code-float{height:80px}
   .code-float__symbol{animation-name:codeFloatMobile}
-  .svg-divider__svg{max-height:50px}
+  .svg-divider__svg{max-height:70px}
   .hscroll-wrap{height:auto !important}
   .hscroll-sticky{position:relative;height:auto}
   .hscroll-track{flex-direction:column;transform:none !important}
