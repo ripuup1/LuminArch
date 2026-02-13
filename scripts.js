@@ -495,12 +495,27 @@
       }, { passive: true });
     }
 
-    /* ---------- GOLD PARTICLE BACKGROUND ---------- */
+    /* ---------- GOLD PARTICLE BACKGROUND + FIREWORKS ---------- */
     var canvas = document.getElementById('particles');
     if (canvas) {
       var ctx = canvas.getContext('2d');
-      var particles = [];
-      var PARTICLE_COUNT = 65;
+      var orbs = [];
+      var sparkles = [];
+      var ORB_COUNT = 65;
+      var isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+
+      /* Color palettes for fireworks */
+      var warmColors = [
+        [255,180,60], [255,120,50], [255,80,80], [255,160,200], [245,215,80], [212,175,55]
+      ];
+      var coolColors = [
+        [80,160,255], [120,80,255], [60,220,200], [180,140,255], [100,200,255], [200,200,255]
+      ];
+
+      function pickFireworkColor() {
+        var palette = Math.random() < 0.5 ? warmColors : coolColors;
+        return palette[Math.floor(Math.random() * palette.length)];
+      }
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -509,36 +524,205 @@
       resize();
       window.addEventListener('resize', resize);
 
-      for (var i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
+      /* Create orbs — 50% are interactive (staggered: every other one) */
+      for (var i = 0; i < ORB_COUNT; i++) {
+        var interactive = !isMobile && (i % 2 === 0);
+        orbs.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 2.5 + 1,
+          r: interactive ? (Math.random() * 1.5 + 2.5) : (Math.random() * 2.5 + 1),
           dx: (Math.random() - 0.5) * 0.35,
           dy: (Math.random() - 0.5) * 0.2 - 0.05,
           opacity: Math.random() * 0.4 + 0.15,
-          hue: Math.random() < 0.3 ? '245,215,80' : '212,175,55'
+          baseOpacity: 0,
+          hue: Math.random() < 0.3 ? '245,215,80' : '212,175,55',
+          interactive: interactive,
+          pulsePhase: Math.random() * Math.PI * 2,
+          alive: true,
+          fadingIn: true,
+          fadeProgress: Math.random()
         });
       }
 
-      function drawParticles() {
+      /* Spawn a sparkle burst at position */
+      function spawnFirework(x, y) {
+        var count = Math.floor(Math.random() * 11) + 20; /* 20-30 sparkles */
+        var baseColor = pickFireworkColor();
+        for (var i = 0; i < count; i++) {
+          var angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.4;
+          var speed = Math.random() * 3 + 1.5;
+          /* Slight color variation per sparkle */
+          var cr = Math.min(255, Math.max(0, baseColor[0] + (Math.random() - 0.5) * 40));
+          var cg = Math.min(255, Math.max(0, baseColor[1] + (Math.random() - 0.5) * 40));
+          var cb = Math.min(255, Math.max(0, baseColor[2] + (Math.random() - 0.5) * 40));
+          sparkles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 1.5,
+            r: Math.random() * 2 + 1,
+            color: [Math.round(cr), Math.round(cg), Math.round(cb)],
+            life: 1.0,
+            decay: Math.random() * 0.015 + 0.012,
+            trail: [] /* glow trail positions */
+          });
+        }
+      }
+
+      /* Respawn an orb at a random location far from existing interactive orbs */
+      function respawnOrb(orb) {
+        var attempts = 0;
+        var newX, newY, tooClose;
+        do {
+          newX = Math.random() * canvas.width;
+          newY = Math.random() * canvas.height;
+          tooClose = false;
+          for (var j = 0; j < orbs.length; j++) {
+            if (orbs[j].interactive && orbs[j].alive && orbs[j] !== orb) {
+              var ddx = orbs[j].x - newX;
+              var ddy = orbs[j].y - newY;
+              if (Math.sqrt(ddx * ddx + ddy * ddy) < 120) { tooClose = true; break; }
+            }
+          }
+          attempts++;
+        } while (tooClose && attempts < 15);
+        orb.x = newX;
+        orb.y = newY;
+        orb.alive = true;
+        orb.fadingIn = true;
+        orb.fadeProgress = 0;
+        orb.r = Math.random() * 1.5 + 2.5;
+      }
+
+      /* Click handler — find clicked orb */
+      if (!isMobile) {
+        canvas.addEventListener('click', function (e) {
+          var mx = e.clientX;
+          var my = e.clientY;
+          for (var i = 0; i < orbs.length; i++) {
+            var o = orbs[i];
+            if (!o.interactive || !o.alive) continue;
+            var hitRadius = o.r + 12; /* generous hit area */
+            var ddx = o.x - mx;
+            var ddy = o.y - my;
+            if (ddx * ddx + ddy * ddy < hitRadius * hitRadius) {
+              spawnFirework(o.x, o.y);
+              o.alive = false;
+              /* Respawn after 2-4 seconds at new location */
+              (function (ref) {
+                setTimeout(function () { respawnOrb(ref); }, 2000 + Math.random() * 2000);
+              })(o);
+              break; /* only one orb per click */
+            }
+          }
+        });
+
+        /* Cursor hint — change cursor when hovering interactive orb */
+        canvas.addEventListener('mousemove', function (e) {
+          var mx = e.clientX;
+          var my = e.clientY;
+          var hovering = false;
+          for (var i = 0; i < orbs.length; i++) {
+            var o = orbs[i];
+            if (!o.interactive || !o.alive) continue;
+            var hitR = o.r + 12;
+            var ddx = o.x - mx;
+            var ddy = o.y - my;
+            if (ddx * ddx + ddy * ddy < hitR * hitR) { hovering = true; break; }
+          }
+          canvas.style.cursor = hovering ? 'pointer' : 'default';
+        });
+      }
+
+      /* Main render loop */
+      function drawFrame() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (var i = 0; i < particles.length; i++) {
-          var p = particles[i];
-          p.x += p.dx;
-          p.y += p.dy;
-          if (p.x < -10) p.x = canvas.width + 10;
-          if (p.x > canvas.width + 10) p.x = -10;
-          if (p.y < -10) p.y = canvas.height + 10;
-          if (p.y > canvas.height + 10) p.y = -10;
+
+        /* Draw orbs */
+        for (var i = 0; i < orbs.length; i++) {
+          var o = orbs[i];
+          if (!o.alive && !o.fadingIn) continue;
+
+          o.x += o.dx;
+          o.y += o.dy;
+          if (o.x < -10) o.x = canvas.width + 10;
+          if (o.x > canvas.width + 10) o.x = -10;
+          if (o.y < -10) o.y = canvas.height + 10;
+          if (o.y > canvas.height + 10) o.y = -10;
+
+          /* Fade in */
+          if (o.fadingIn) {
+            o.fadeProgress += 0.01;
+            if (o.fadeProgress >= 1) { o.fadeProgress = 1; o.fadingIn = false; }
+          }
+
+          var displayOpacity = o.opacity * o.fadeProgress;
+
+          /* Subtle pulse for interactive orbs */
+          var radius = o.r;
+          if (o.interactive && o.alive) {
+            o.pulsePhase += 0.03;
+            radius += Math.sin(o.pulsePhase) * 0.6;
+            /* Soft glow */
+            ctx.beginPath();
+            ctx.arc(o.x, o.y, radius + 4, 0, 6.283);
+            ctx.fillStyle = 'rgba(' + o.hue + ',' + (displayOpacity * 0.15) + ')';
+            ctx.fill();
+          }
+
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, 6.283);
-          ctx.fillStyle = 'rgba(' + p.hue + ',' + p.opacity + ')';
+          ctx.arc(o.x, o.y, radius, 0, 6.283);
+          ctx.fillStyle = 'rgba(' + o.hue + ',' + displayOpacity + ')';
           ctx.fill();
         }
-        requestAnimationFrame(drawParticles);
+
+        /* Draw sparkles (firework particles) */
+        for (var i = sparkles.length - 1; i >= 0; i--) {
+          var s = sparkles[i];
+
+          /* Store trail position */
+          s.trail.push({ x: s.x, y: s.y, life: s.life });
+          if (s.trail.length > 4) s.trail.shift();
+
+          /* Physics: gravity + velocity */
+          s.vy += 0.06; /* gravity */
+          s.vx *= 0.985; /* air friction */
+          s.vy *= 0.985;
+          s.x += s.vx;
+          s.y += s.vy;
+          s.life -= s.decay;
+
+          if (s.life <= 0) {
+            sparkles.splice(i, 1);
+            continue;
+          }
+
+          /* Draw glow trail */
+          for (var t = 0; t < s.trail.length; t++) {
+            var tr = s.trail[t];
+            var trailAlpha = (t / s.trail.length) * s.life * 0.3;
+            ctx.beginPath();
+            ctx.arc(tr.x, tr.y, s.r * 0.6, 0, 6.283);
+            ctx.fillStyle = 'rgba(' + s.color[0] + ',' + s.color[1] + ',' + s.color[2] + ',' + trailAlpha + ')';
+            ctx.fill();
+          }
+
+          /* Draw main sparkle */
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r * s.life, 0, 6.283);
+          ctx.fillStyle = 'rgba(' + s.color[0] + ',' + s.color[1] + ',' + s.color[2] + ',' + s.life + ')';
+          ctx.fill();
+
+          /* Bright center */
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r * s.life * 0.4, 0, 6.283);
+          ctx.fillStyle = 'rgba(255,255,255,' + (s.life * 0.6) + ')';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(drawFrame);
       }
-      drawParticles();
+      drawFrame();
     }
   }); // end DOMContentLoaded
 })();
