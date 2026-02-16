@@ -21,16 +21,18 @@
 <meta name="twitter:title" content="Our Work — Website Design Portfolio | LuminArch">
 <meta name="twitter:description" content="Real projects, real results. Hand-coded websites for law firms, contractors, and small businesses. Browse our portfolio.">
 <meta name="twitter:image" content="https://luminarch.pro/images/og-image.png">
-<!-- Fonts -->
+<!-- Fonts (non-render-blocking) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=General+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="styles.css">
 <!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MPSZCPJTK"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3MPSZCPJTK');</script>
 <!-- Schema.org Portfolio -->
 <script type="application/ld+json">
 {
@@ -212,7 +214,7 @@
           <a href="https://carter-carter-site.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://carter-carter-site.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/project1.png" alt="Carter and Carter Law Firm website — custom law firm web design and development by LuminArch in Wilmington, North Carolina" width="1200" height="571">
+          <img src="images/project1.png" alt="Carter and Carter Law Firm website — custom law firm web design and development by LuminArch in Wilmington, North Carolina" loading="lazy" width="1200" height="571">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
         <span class="hscroll-slide__num">01</span>
@@ -237,7 +239,7 @@
           <a href="https://mktraditions.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://mktraditions.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/project2.jpg" alt="MK Traditions Event Planning website — custom event planner web design and development by LuminArch in the Triangle, North Carolina" width="1200" height="571">
+          <img src="images/project2.jpg" alt="MK Traditions Event Planning website — custom event planner web design and development by LuminArch in the Triangle, North Carolina" loading="lazy" width="1200" height="571">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
         <span class="hscroll-slide__num">02</span>
@@ -262,7 +264,7 @@
           <a href="https://mdn-cabinets.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://mdn-cabinets.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/project3.png" alt="MDN Cabinets and Millwork website — custom commercial millwork web design and development by LuminArch in Garner, North Carolina" width="1200" height="571">
+          <img src="images/project3.png" alt="MDN Cabinets and Millwork website — custom commercial millwork web design and development by LuminArch in Garner, North Carolina" loading="lazy" width="1200" height="571">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
         <span class="hscroll-slide__num">03</span>
@@ -287,7 +289,7 @@
           <a href="https://rjsalvatolaw.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://rjsalvatolaw.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/project4.png" alt="Law Office of Ronald J. Salvato website — custom attorney web design and development by LuminArch in Goshen, New York" width="1200" height="571">
+          <img src="images/project4.png" alt="Law Office of Ronald J. Salvato website — custom attorney web design and development by LuminArch in Goshen, New York" loading="lazy" width="1200" height="571">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
         <span class="hscroll-slide__num">04</span>
@@ -312,7 +314,7 @@
           <a href="https://roccos-cigar-demo.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://roccos-cigar-demo.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/roccos-cigar-preview.jpg" alt="Rocco's Cigar Bar website — custom cigar lounge web design and development by LuminArch in Wilmington, North Carolina" width="1200" height="571"
+          <img src="images/roccos-cigar-preview.jpg" alt="Rocco's Cigar Bar website — custom cigar lounge web design and development by LuminArch in Wilmington, North Carolina" loading="lazy" width="1200" height="571"
                onerror="this.parentElement.style.background='linear-gradient(135deg,#1a1a1a 0%,#222 100%)';this.style.display='none'">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
@@ -338,7 +340,7 @@
           <a href="https://rls-website-chi.vercel.app/" target="_blank" rel="noopener" class="btn magnetic" style="margin-top:8px">View Live Site <span class="btn-arrow">&rarr;</span></a>
         </div>
         <a href="https://rls-website-chi.vercel.app/" target="_blank" rel="noopener" class="hscroll-slide__visual">
-          <img src="images/rls-preview.jpg" alt="Residential Land Services website — professional land surveying web design and development by LuminArch in Cary, North Carolina" width="1200" height="571"
+          <img src="images/rls-preview.jpg" alt="Residential Land Services website — professional land surveying web design and development by LuminArch in Cary, North Carolina" loading="lazy" width="1200" height="571"
                onerror="this.parentElement.style.background='linear-gradient(135deg,#1a1a1a 0%,#222 100%)';this.style.display='none'">
           <div class="hscroll-slide__visual-overlay"><span>View Live Site &rarr;</span></div>
         </a>
