@@ -124,6 +124,8 @@
 
   function quickFade() {
     safeDismiss(function () {
+      var simpleLoader = document.getElementById('pageLoader');
+      if (simpleLoader) { simpleLoader.classList.add('done'); }
       if (pageFade) {
         pageFade.classList.add('done');
         setTimeout(triggerHeroAnimation, 300);
@@ -133,14 +135,37 @@
     });
   }
 
+  /* Decide whether to show the full blueprint loader or just a quick fade.
+     Blueprint plays on: first visit (no sessionStorage) OR hard refresh (F5).
+     Skipped on: internal navigation (Home -> Work -> Home). */
+  function shouldShowBlueprint() {
+    try {
+      var navEntries = performance.getEntriesByType('navigation');
+      var navType = navEntries.length ? navEntries[0].type : '';
+      var alreadySeen = sessionStorage.getItem('la_bp_done');
+      if (!alreadySeen) return true;
+      if (navType === 'reload') return true;
+      return false;
+    } catch (e) { return true; }
+  }
+
   if (bpLoader) {
-    var doLoader = function () {
-      safeDismiss(function () { runBlueprintLoader(); });
-    };
-    if (document.readyState === 'complete') doLoader();
-    else {
-      window.addEventListener('load', doLoader);
-      setTimeout(doLoader, 4000);
+    if (shouldShowBlueprint()) {
+      var doLoader = function () {
+        safeDismiss(function () {
+          runBlueprintLoader();
+          try { sessionStorage.setItem('la_bp_done', '1'); } catch (e) {}
+        });
+      };
+      if (document.readyState === 'complete') doLoader();
+      else {
+        window.addEventListener('load', doLoader);
+        setTimeout(doLoader, 4000);
+      }
+    } else {
+      bpLoader.style.display = 'none';
+      bpLoader.classList.add('done');
+      setTimeout(quickFade, 60);
     }
   } else {
     if (document.readyState === 'complete' || document.readyState === 'interactive') {

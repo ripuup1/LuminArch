@@ -115,6 +115,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .page-fade{position:fixed;inset:0;background:var(--black);z-index:9999;pointer-events:none;opacity:1;transition:opacity .35s ease}
 .page-fade.done{opacity:0}
 
+/* SIMPLE PAGE LOADER (inner pages) */
+.page-loader{position:fixed;inset:0;background:var(--black);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s ease}
+.page-loader.done{opacity:0;pointer-events:none}
+.page-loader__logo{width:60px;height:auto;opacity:.85}
+.page-loader__line{width:48px;height:2px;position:relative;overflow:hidden;border-radius:2px;background:rgba(212,175,55,.15)}
+.page-loader__line::after{content:'';position:absolute;inset:0;background:var(--accent);animation:splashLineSlide 1.2s var(--ease-out-expo,cubic-bezier(.16,1,.3,1)) infinite}
+.page-loader__text{font-family:var(--font-body);font-size:.6875rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:rgba(212,175,55,.45)}
+@keyframes splashLineSlide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
 /* SCROLL PROGRESS BAR */
 .scroll-progress{position:fixed;top:0;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-light));z-index:10001;pointer-events:none;transition:none}
 
