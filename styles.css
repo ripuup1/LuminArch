@@ -141,10 +141,10 @@ img[loading="lazy"].loaded,img[loading="lazy"].visible-img{opacity:1}
 .hero__grid-lines{position:absolute;inset:0;display:flex;justify-content:space-between;padding:0 var(--pad)}
 .hero__grid-lines span{width:1px;height:100%;background:rgba(255,255,255,.08)}
 .hero__logo-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;margin-bottom:clamp(40px,6vh,64px);will-change:transform,opacity}
-.hero__logo-img{width:clamp(180px,22vw,280px);height:auto;opacity:0;transform:scale(.7);filter:drop-shadow(0 0 60px var(--accent-glow)) drop-shadow(0 0 120px rgba(212,175,55,0.2));transition:transform .6s ease,filter .6s ease}
-.hero__logo-img.logo-visible{opacity:1;transform:scale(1);animation:logoEntrance 1.2s var(--ease-out-expo) forwards}
+.hero__logo-img{width:clamp(180px,22vw,280px);height:auto;opacity:0;transform:scale(.2);filter:brightness(3) blur(10px) drop-shadow(0 0 80px rgba(255,255,255,0.8));transition:transform .6s ease,filter .6s ease}
+.hero__logo-img.logo-visible{opacity:1;transform:scale(1);animation:logoUnfold 1.4s var(--ease-out-expo) forwards}
 .hero__logo-img:hover{transform:scale(1.04);filter:drop-shadow(0 0 70px var(--accent-glow)) drop-shadow(0 0 140px rgba(212,175,55,0.3))}
-@keyframes logoEntrance{0%{opacity:0;transform:scale(.7);filter:drop-shadow(0 0 0 transparent)}40%{opacity:1;transform:scale(1.06);filter:drop-shadow(0 0 80px var(--accent-glow)) drop-shadow(0 0 160px rgba(212,175,55,0.35))}100%{opacity:1;transform:scale(1);filter:drop-shadow(0 0 60px var(--accent-glow)) drop-shadow(0 0 120px rgba(212,175,55,0.2))}}
+@keyframes logoUnfold{0%{opacity:0;transform:scale(.2);filter:brightness(3) blur(10px) drop-shadow(0 0 80px rgba(255,255,255,0.8))}15%{opacity:1;transform:scale(.35);filter:brightness(2.5) blur(6px) drop-shadow(0 0 60px rgba(255,255,255,0.6))}45%{transform:scale(1.08);filter:brightness(1.4) blur(0) drop-shadow(0 0 100px var(--accent-glow)) drop-shadow(0 0 180px rgba(212,175,55,0.4))}70%{transform:scale(.97);filter:brightness(1.1) blur(0) drop-shadow(0 0 70px var(--accent-glow)) drop-shadow(0 0 140px rgba(212,175,55,0.25))}100%{opacity:1;transform:scale(1);filter:brightness(1) blur(0) drop-shadow(0 0 60px var(--accent-glow)) drop-shadow(0 0 120px rgba(212,175,55,0.2))}}
 .hero__content{position:relative;z-index:2;text-align:center;max-width:960px;padding:0 var(--pad)}
 .hero__label{margin-bottom:24px;color:var(--gray-light)}
 .hero__title{margin-bottom:clamp(28px,4vh,48px)}
