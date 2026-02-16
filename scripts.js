@@ -3,68 +3,167 @@
 (function () {
   'use strict';
 
-  /* ---------- SESSION-AWARE LOADER ---------- */
-  var loader = document.getElementById('pageLoader');
+  /* ---------- BLUEPRINT LOADER ---------- */
+  var bpLoader = document.getElementById('bpLoader');
   var pageFade = document.querySelector('.page-fade');
-  var isFirstVisit = !sessionStorage.getItem('la_visited');
-  var LOADER_MIN = 1400; // Ensure loader stays at least ~1s after logo animation starts
-  var loadStart = Date.now();
   var dismissed = false;
 
-  // Mark session as visited
-  sessionStorage.setItem('la_visited', '1');
-
-  // Guard against double-dismiss
   function safeDismiss(fn) {
     if (dismissed) return;
     dismissed = true;
     fn();
   }
 
-  if (isFirstVisit && loader) {
-    // First visit: show full branded loader
+  function animateEl(el, props, dur, delay) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        if (!el) { resolve(); return; }
+        var els = el.length !== undefined ? Array.from(el) : [el];
+        els.forEach(function (e, i) {
+          setTimeout(function () {
+            Object.keys(props).forEach(function (k) { e.style[k] = props[k]; });
+          }, i * 30);
+        });
+        setTimeout(resolve, dur + (els.length - 1) * 30);
+      }, delay || 0);
+    });
+  }
+
+  function runBlueprintLoader() {
+    if (!bpLoader) { quickFade(); return; }
+    var gridLines = bpLoader.querySelectorAll('.bp-loader__grid-h, .bp-loader__grid-v');
+    var rect = bpLoader.querySelector('.bp-loader__rect');
+    var ticks = bpLoader.querySelectorAll('.bp-loader__tick');
+    var crosses = bpLoader.querySelectorAll('.bp-loader__cross');
+    var counterEl = bpLoader.querySelector('#bpCounter');
+    var labelEl = bpLoader.querySelector('.bp-loader__label');
+    var scanline = bpLoader.querySelector('.bp-loader__scanline');
+    var logoReveal = bpLoader.querySelector('.bp-loader__logo-reveal');
+    var logoImg = bpLoader.querySelector('.bp-loader__logo-img');
+    var flash = bpLoader.querySelector('.bp-loader__flash');
+
+    var counterVal = 0;
+    var counterInterval;
+
+    // Phase 1: Grid lines fade in (0ms)
+    gridLines.forEach(function (l, i) {
+      setTimeout(function () { l.style.transition = 'opacity .4s'; l.style.opacity = '1'; }, i * 40);
+    });
+
+    // Counter + label appear (200ms)
+    setTimeout(function () {
+      if (counterEl) { counterEl.style.transition = 'opacity .3s'; counterEl.style.opacity = '1'; }
+      if (labelEl) { labelEl.style.transition = 'opacity .3s'; labelEl.style.opacity = '1'; }
+    }, 200);
+
+    // Counter counts to 100 (300ms - 2100ms)
+    setTimeout(function () {
+      counterInterval = setInterval(function () {
+        counterVal += 2;
+        if (counterVal > 100) counterVal = 100;
+        if (counterEl) counterEl.textContent = counterVal + '%';
+        if (counterVal >= 100) clearInterval(counterInterval);
+      }, 35);
+    }, 300);
+
+    // Phase 2: Frame draws (400ms)
+    setTimeout(function () {
+      if (rect) { rect.style.transition = 'stroke-dashoffset 1.2s ease-in-out'; rect.style.strokeDashoffset = '0'; }
+    }, 400);
+
+    // Ticks appear (600ms)
+    ticks.forEach(function (t, i) {
+      setTimeout(function () { t.style.opacity = '0.6'; }, 600 + i * 20);
+    });
+
+    // Crosshairs (900ms)
+    setTimeout(function () {
+      crosses.forEach(function (c) { c.style.transition = 'opacity .2s'; c.style.opacity = '1'; });
+    }, 900);
+
+    // Scan line sweep (1000ms)
+    setTimeout(function () {
+      if (scanline) { scanline.style.opacity = '0.8'; scanline.style.transition = 'top 1s ease-in-out'; }
+      setTimeout(function () { if (scanline) scanline.style.top = '100%'; }, 50);
+      setTimeout(function () { if (scanline) { scanline.style.transition = 'opacity .2s'; scanline.style.opacity = '0'; } }, 1000);
+    }, 1000);
+
+    // Phase 3: Logo reveal (1400ms)
+    setTimeout(function () {
+      if (logoReveal) { logoReveal.style.transition = 'clip-path .7s cubic-bezier(.65,0,.35,1)'; logoReveal.style.clipPath = 'inset(0% 0% 0% 0%)'; }
+    }, 1400);
+
+    // Logo color transition (1800ms)
+    setTimeout(function () {
+      if (logoImg) { logoImg.style.filter = 'grayscale(0) brightness(1.3) drop-shadow(0 0 40px rgba(212,175,55,0.5)) saturate(1.5)'; }
+    }, 1800);
+
+    // Phase 4: Flash + dismiss (2200ms)
+    setTimeout(function () {
+      if (flash) { flash.style.transition = 'opacity .08s'; flash.style.opacity = '0.6'; }
+      setTimeout(function () {
+        if (flash) { flash.style.transition = 'opacity .3s'; flash.style.opacity = '0'; }
+      }, 80);
+
+      // Fade out grid + info
+      gridLines.forEach(function (l) { l.style.transition = 'opacity .3s'; l.style.opacity = '0'; });
+      if (counterEl) { counterEl.style.transition = 'opacity .3s'; counterEl.style.opacity = '0'; }
+      if (labelEl) { labelEl.style.transition = 'opacity .3s'; labelEl.style.opacity = '0'; }
+      var frameSvg = bpLoader.querySelector('.bp-loader__frame-svg');
+      if (frameSvg) { frameSvg.style.transition = 'opacity .3s'; frameSvg.style.opacity = '0'; }
+    }, 2200);
+
+    // Slide loader away (2500ms)
+    setTimeout(function () {
+      bpLoader.style.transition = 'transform .8s cubic-bezier(.65,0,.35,1)';
+      bpLoader.style.transform = 'translateY(-100%)';
+      setTimeout(function () {
+        bpLoader.classList.add('done');
+        bpLoader.style.display = 'none';
+        if (pageFade) pageFade.classList.add('done');
+        triggerHeroAnimation();
+      }, 800);
+    }, 2500);
+  }
+
+  function quickFade() {
+    safeDismiss(function () {
+      if (pageFade) {
+        pageFade.classList.add('done');
+        setTimeout(triggerHeroAnimation, 300);
+      } else {
+        triggerHeroAnimation();
+      }
+    });
+  }
+
+  if (bpLoader) {
     var doLoader = function () {
-      safeDismiss(function () {
-        var elapsed = Date.now() - loadStart;
-        var remaining = Math.max(0, LOADER_MIN - elapsed);
-        setTimeout(function () {
-          loader.classList.add('done');
-          // ALSO dismiss the page-fade sitting behind the loader
-          if (pageFade) pageFade.classList.add('done');
-          setTimeout(triggerHeroAnimation, 700);
-        }, remaining);
-      });
+      safeDismiss(function () { runBlueprintLoader(); });
     };
     if (document.readyState === 'complete') doLoader();
     else {
       window.addEventListener('load', doLoader);
-      // Failsafe: dismiss after max 4s even if load never fires
       setTimeout(doLoader, 4000);
     }
   } else {
-    // Return visit (internal navigation): skip branded loader, quick fade
-    if (loader) loader.classList.add('skip');
-
-    var doFade = function () {
-      safeDismiss(function () {
-        if (pageFade) {
-          pageFade.classList.add('done');
-          setTimeout(triggerHeroAnimation, 300);
-        } else {
-          triggerHeroAnimation();
-        }
-      });
-    };
-
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(doFade, 60);
+      setTimeout(quickFade, 60);
     } else {
-      document.addEventListener('DOMContentLoaded', function () { setTimeout(doFade, 60); });
+      document.addEventListener('DOMContentLoaded', function () { setTimeout(quickFade, 60); });
     }
-    window.addEventListener('load', function () { setTimeout(doFade, 60); });
-    window.addEventListener('pageshow', function (e) { if (e.persisted) setTimeout(doFade, 60); });
-    setTimeout(doFade, 2000);
+    window.addEventListener('load', function () { setTimeout(quickFade, 60); });
+    setTimeout(quickFade, 2000);
   }
+
+  // Tab switch: don't re-run loader, just ensure page is visible
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted && bpLoader) {
+      bpLoader.style.display = 'none';
+      bpLoader.classList.add('done');
+      if (pageFade) pageFade.classList.add('done');
+    }
+  });
 
   /* ---------- HERO ENTRANCE SEQUENCE ---------- */
   function triggerHeroAnimation() {
@@ -184,8 +283,8 @@
       if (window.matchMedia('(max-width:768px)').matches) return;
 
       var slides = track.children.length;
-      // Each slide gets 100vh of scroll space
-      wrap.style.height = (slides * 100) + 'vh';
+      // Each slide gets 60vh of scroll space (tighter transitions)
+      wrap.style.height = (slides * 60) + 'vh';
 
       var barFill = document.getElementById('hscrollBarFill');
       var counterEl = document.getElementById('hscrollCurrent');
