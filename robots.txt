@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lumin-arch.vercel.app/sitemap.xml
+Sitemap: https://luminarch.pro/sitemap.xml
