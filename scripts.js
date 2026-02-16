@@ -88,15 +88,11 @@
       setTimeout(function () { if (scanline) { scanline.style.transition = 'opacity .2s'; scanline.style.opacity = '0'; } }, 1000);
     }, 1000);
 
-    // Phase 3: Logo reveal (1400ms)
+    // Phase 3: Logo reveal — clip-path opens and logo fades in together (1400ms)
     setTimeout(function () {
       if (logoReveal) { logoReveal.style.transition = 'clip-path .7s cubic-bezier(.65,0,.35,1)'; logoReveal.style.clipPath = 'inset(0% 0% 0% 0%)'; }
+      if (logoImg) { logoImg.style.opacity = '1'; logoImg.style.filter = 'brightness(1.3) drop-shadow(0 0 40px rgba(212,175,55,0.5)) saturate(1.5)'; }
     }, 1400);
-
-    // Logo color transition (1800ms)
-    setTimeout(function () {
-      if (logoImg) { logoImg.style.filter = 'grayscale(0) brightness(1.3) drop-shadow(0 0 40px rgba(212,175,55,0.5)) saturate(1.5)'; }
-    }, 1800);
 
     // Phase 4: Flash + dismiss (2200ms)
     setTimeout(function () {
