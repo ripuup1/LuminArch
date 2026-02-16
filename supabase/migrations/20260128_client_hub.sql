@@ -77,7 +77,36 @@ CREATE INDEX IF NOT EXISTS idx_tickets_status ON public.support_tickets(status);
 CREATE INDEX IF NOT EXISTS idx_tickets_created ON public.support_tickets(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_attachments_ticket_id ON public.ticket_attachments(ticket_id);
 
--- 7. Storage bucket (run separately in Supabase Dashboard > Storage > New Bucket)
+-- 7. User Profiles table (approval system)
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id        uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  approved  boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Users can read their own profile (to check approval status)
+CREATE POLICY "Users can view own profile"
+  ON public.user_profiles FOR SELECT
+  USING (auth.uid() = id);
+
+-- Auto-create a profile row when a new user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id) VALUES (NEW.id);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+CREATE INDEX IF NOT EXISTS idx_user_profiles_approved ON public.user_profiles(approved);
+
+-- 8. Storage bucket (run separately in Supabase Dashboard > Storage > New Bucket)
 -- Bucket name: ticket-files
 -- Public: false (private)
 -- File size limit: 10MB

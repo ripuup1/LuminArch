@@ -639,7 +639,28 @@
     if (contactForm) {
       contactForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        contactForm.innerHTML = '<div class="reveal visible" style="text-align:center;padding:60px 0"><h2 class="h2" style="margin-bottom:16px">Message <em class="italic accent-text">sent</em></h2><p class="body-lg" style="color:var(--gray-light)">We\'ll get back to you within 24 hours.</p></div>';
+        var btn = contactForm.querySelector('button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+        var formData = new FormData(contactForm);
+        fetch(contactForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        }).then(function (res) {
+          if (res.ok) {
+            contactForm.innerHTML = '<div class="reveal visible" style="text-align:center;padding:60px 0"><h2 class="h2" style="margin-bottom:16px">Message <em class="italic accent-text">sent</em></h2><p class="body-lg" style="color:var(--gray-light)">We\'ll get back to you within 24 hours.</p></div>';
+          } else {
+            throw new Error('Form submission failed');
+          }
+        }).catch(function () {
+          if (btn) { btn.disabled = false; btn.innerHTML = 'Send Message <span class="btn-arrow">&rarr;</span>'; }
+          var errMsg = document.createElement('p');
+          errMsg.style.cssText = 'color:#ff6b6b;margin-top:12px;font-size:.875rem;text-align:center';
+          errMsg.textContent = 'Something went wrong. Please try again or email us directly at luminarch2026@gmail.com';
+          btn.parentNode.appendChild(errMsg);
+          setTimeout(function () { if (errMsg.parentNode) errMsg.parentNode.removeChild(errMsg); }, 6000);
+        });
       });
     }
 
