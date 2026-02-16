@@ -78,23 +78,37 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* Shooting stars */
 .bp-loader__stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-.bp-loader__star{position:absolute;width:0;height:0;opacity:0;transform:rotate(-32deg)}
+.bp-loader__star{position:absolute;width:0;height:0;opacity:0}
 .bp-loader__star::before{content:'';position:absolute;top:-2px;left:0;width:5px;height:5px;background:#fff;border-radius:50%;box-shadow:0 0 12px 4px rgba(255,255,255,0.9),0 0 24px 8px rgba(255,255,255,0.4)}
 .bp-loader__star::after{content:'';position:absolute;top:-0.5px;left:5px;height:2px;width:0;background:linear-gradient(to right,rgba(255,255,255,0.9),rgba(255,255,255,0.5) 20%,rgba(255,255,255,0.1) 60%,transparent);border-radius:1px}
-.bp-loader__star--1{top:8%;left:105%;animation:shootMove .45s cubic-bezier(0,.1,.35,1) .5s forwards}
+
+/* Star 1: top-right to bottom-left */
+.bp-loader__star--1{top:6%;left:105%;animation:shoot1 .45s cubic-bezier(0,.1,.35,1) .5s forwards}
 .bp-loader__star--1::after{animation:shootTail .45s cubic-bezier(0,.1,.35,1) .5s forwards}
-.bp-loader__star--2{top:28%;left:110%;animation:shootMove .5s cubic-bezier(0,.1,.35,1) 1.1s forwards}
+@keyframes shoot1{0%{opacity:1;transform:rotate(-28deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-28deg) translateX(-120vw)}}
+
+/* Star 2: bottom-left to top-right */
+.bp-loader__star--2{top:75%;left:-5%;animation:shoot2 .5s cubic-bezier(0,.1,.35,1) 1.1s forwards}
 .bp-loader__star--2::after{animation:shootTail .5s cubic-bezier(0,.1,.35,1) 1.1s forwards}
-.bp-loader__star--3{top:52%;left:108%;animation:shootMove .4s cubic-bezier(0,.1,.35,1) 1.7s forwards}
-.bp-loader__star--3::after{animation:shootTail .4s cubic-bezier(0,.1,.35,1) 1.7s forwards}
-.bp-loader__star--4{top:18%;left:112%;animation:shootMove .48s cubic-bezier(0,.1,.35,1) 2.15s forwards}
+@keyframes shoot2{0%{opacity:1;transform:rotate(155deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(155deg) translateX(-120vw)}}
+
+/* Star 3: top-left to bottom-right */
+.bp-loader__star--3{top:10%;left:-8%;animation:shoot3 .42s cubic-bezier(0,.1,.35,1) 1.7s forwards}
+.bp-loader__star--3::after{animation:shootTail .42s cubic-bezier(0,.1,.35,1) 1.7s forwards}
+@keyframes shoot3{0%{opacity:1;transform:rotate(-155deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-155deg) translateX(-120vw)}}
+
+/* Star 4: right to left, shallow angle */
+.bp-loader__star--4{top:40%;left:108%;animation:shoot4 .48s cubic-bezier(0,.1,.35,1) 2.15s forwards}
 .bp-loader__star--4::after{animation:shootTail .48s cubic-bezier(0,.1,.35,1) 2.15s forwards}
-.bp-loader__star--5{top:42%;left:106%;animation:shootMove .42s cubic-bezier(0,.1,.35,1) 2.55s forwards}
-.bp-loader__star--5::after{animation:shootTail .42s cubic-bezier(0,.1,.35,1) 2.55s forwards}
-@keyframes shootMove{0%{opacity:1;transform:rotate(-32deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-32deg) translateX(-120vw)}}
+@keyframes shoot4{0%{opacity:1;transform:rotate(-12deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-12deg) translateX(-120vw)}}
+
+/* Star 5: bottom-right to upper-left, steep */
+.bp-loader__star--5{top:85%;left:102%;animation:shoot5 .44s cubic-bezier(0,.1,.35,1) 2.55s forwards}
+.bp-loader__star--5::after{animation:shootTail .44s cubic-bezier(0,.1,.35,1) 2.55s forwards}
+@keyframes shoot5{0%{opacity:1;transform:rotate(-55deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-55deg) translateX(-120vw)}}
+
 @keyframes shootTail{0%{width:0}8%{width:180px}100%{width:180px}}
 @media(max-width:768px){.bp-loader__frame{width:220px;height:220px}
-@keyframes shootMove{0%{opacity:1;transform:rotate(-32deg) translateX(0)}85%{opacity:1}100%{opacity:0;transform:rotate(-32deg) translateX(-110vw)}}
 @keyframes shootTail{0%{width:0}10%{width:100px}100%{width:100px}}}
 
 /* QUICK PAGE FADE (internal navigation) */
