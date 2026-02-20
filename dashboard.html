@@ -43,17 +43,17 @@
       <a href="client-hub.html" class="nav__link active">Client Hub</a>
       <a href="contact.html" class="nav__cta">Get a Quote</a>
     </div>
-    <div class="nav__toggle" id="navToggle"><span></span><span></span><span></span></div>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
-<div class="nav__mobile-menu" id="mobileMenu">
+<nav class="nav__mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="work.html">Work</a>
   <a href="services.html">Services &amp; Pricing</a>
   <a href="about.html">About</a>
   <a href="client-hub.html">Client Hub</a>
   <a href="contact.html">Contact</a>
-</div>
+</nav>
 
 <!-- Dashboard content (hidden until auth check) -->
 <div id="dashContent" class="dash-loading">
@@ -197,8 +197,9 @@
 </div><!-- end #dashMain -->
 </div><!-- end #dashContent -->
 
-<footer class="footer dash-loading" id="dashFooter">
-  <div class="container">
+<footer class="footer dash-loading" id="dashFooter" style="position:relative">
+  <canvas id="constellation" aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none"></canvas>
+  <div class="container" style="position:relative;z-index:1">
     <div class="footer__top">
       <div class="footer__brand">
         <div class="footer__brand-name">

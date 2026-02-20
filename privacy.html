@@ -7,6 +7,7 @@
 <meta name="description" content="LuminArch privacy policy. Learn how we collect, use, and protect your information when you use our website design services.">
 <link rel="canonical" href="https://luminarch.pro/privacy.html">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
 <meta property="og:title" content="Privacy Policy — LuminArch">
 <meta property="og:description" content="Learn how we collect, use, and protect your information when you use our website design services.">
 <meta property="og:url" content="https://luminarch.pro/privacy.html">
@@ -43,6 +44,7 @@
 <canvas id="particles" aria-hidden="true"></canvas>
 <div class="grain"></div>
 <div class="cursor-dot"></div>
+<a href="#main-content" class="skip-link">Skip to content</a>
 
 <nav class="nav" id="nav">
   <div class="nav__inner">
@@ -58,17 +60,18 @@
       <a href="client-hub.html" class="nav__link">Client Hub</a>
       <a href="contact.html" class="nav__cta">Get a Quote</a>
     </div>
-    <div class="nav__toggle" id="navToggle"><span></span><span></span><span></span></div>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </nav>
-<div class="nav__mobile-menu" id="mobileMenu">
+<nav class="nav__mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="work.html">Work</a>
   <a href="services.html">Services &amp; Pricing</a>
   <a href="about.html">About</a>
   <a href="client-hub.html">Client Hub</a>
   <a href="contact.html">Contact</a>
-</div>
+</nav>
+<main id="main-content">
 
 <section class="page-header section">
   <div class="container">
@@ -94,7 +97,7 @@
       <p class="body-lg" style="color:var(--gray-muted);line-height:1.8;margin-bottom:32px">We take reasonable measures to protect your information. Client Hub data is secured with row-level security policies, and all communications are encrypted in transit via HTTPS. However, no method of transmission over the internet is 100% secure.</p>
 
       <h2 class="h3" style="margin-bottom:16px">5. Cookies</h2>
-      <p class="body-lg" style="color:var(--gray-muted);line-height:1.8;margin-bottom:32px">Our website uses session storage for functional purposes (such as remembering loader animation state). We do not use tracking cookies or third-party analytics cookies.</p>
+      <p class="body-lg" style="color:var(--gray-muted);line-height:1.8;margin-bottom:32px">Our website uses session storage for functional purposes (such as remembering loader animation state). We use Google Analytics to understand how visitors interact with our site. This service may place cookies (such as _ga) on your device to collect anonymous usage data. We do not use cookies for advertising or to track you across other websites.</p>
 
       <h2 class="h3" style="margin-bottom:16px">6. Your Rights</h2>
       <p class="body-lg" style="color:var(--gray-muted);line-height:1.8;margin-bottom:32px">You may request access to, correction of, or deletion of your personal information at any time by contacting us at <a href="mailto:luminarch2026@gmail.com" style="color:var(--accent)">luminarch2026@gmail.com</a>.</p>
@@ -107,6 +110,8 @@
     </div>
   </div>
 </section>
+
+</main>
 
 <footer class="footer" style="position:relative">
   <canvas id="constellation" aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none"></canvas>
